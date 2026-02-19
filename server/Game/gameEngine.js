@@ -32,6 +32,17 @@ class GameEngine {
 
     return { correct: false };
   }
+
+  nextRound() {
+    if (!this.songs) return false;
+    if (this.currentRound + 1 > this.songs.length) return false;
+    this.currentRound++;
+    return true;
+  }
+
+  get currentRoundNumber() {
+    return this.currentRound;
+  }
 }
 
 module.exports = new GameEngine();

@@ -20,10 +20,19 @@ const startGame = async (req, res) => {
   }
 };
 
-const submitGuess = async (req, res) => {
+const submitGuess = (req, res) => {
   const { username, guess } = req.body;
   const result = game.submitGuess(username, guess);
   res.json(result);
 };
 
-module.exports = { startGame, submitGuess };
+const nextRound = (req, res) => {
+  const success = game.nextRound();
+  res.json({ success });
+};
+
+const getRoundNumber = (req, res) => {
+  res.json({ round: game.currentRoundNumber });
+};
+
+module.exports = { startGame, submitGuess, nextRound, getRoundNumber };
