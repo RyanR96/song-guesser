@@ -8,10 +8,20 @@ class GameEngine {
   }
 
   startGame(songs) {
+    if (!songs || songs.length === 0) {
+      return false;
+    }
+
+    if (this.isPlaying) {
+      return false;
+    }
+
     this.isPlaying = true;
     this.songs = songs;
     this.currentRound = 1;
     this.currentSong = songs[0];
+
+    return true;
   }
 
   submitGuess(username, guess) {

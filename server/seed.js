@@ -18,6 +18,10 @@ async function main() {
       title: "Sleepwalking",
       artist: "All Time Low",
     },
+    {
+      title: "Nerve",
+      artist: "The Story So Far",
+    },
   ];
 
   await Promise.all(
