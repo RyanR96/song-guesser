@@ -34,4 +34,4 @@ class GameEngine {
   }
 }
 
-module.exports = GameEngine;
+module.exports = new GameEngine();
