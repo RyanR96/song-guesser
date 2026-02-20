@@ -35,4 +35,16 @@ const getRoundNumber = (req, res) => {
   res.json({ round: game.currentRoundNumber });
 };
 
-module.exports = { startGame, submitGuess, nextRound, getRoundNumber };
+const joinGame = (req, res) => {
+  const { username } = req.body;
+  const result = game.joinGame(username);
+  res.json(result);
+};
+
+module.exports = {
+  startGame,
+  submitGuess,
+  nextRound,
+  getRoundNumber,
+  joinGame,
+};

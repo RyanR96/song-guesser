@@ -24,6 +24,21 @@ class GameEngine {
     return true;
   }
 
+  joinGame(username) {
+    if (!username) {
+      return { error: "Username required" };
+    }
+
+    if (this.players[username]) {
+      return { error: "Username already exists" };
+    }
+
+    this.players[username] = { score: 0 };
+    console.log(this.players);
+
+    return { success: true };
+  }
+
   submitGuess(username, guess) {
     if (!this.isPlaying) return { error: "Game not underway" };
     if (guess.toLowerCase() === this.currentSong.title.toLowerCase()) {

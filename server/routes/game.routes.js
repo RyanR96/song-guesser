@@ -11,4 +11,6 @@ router.post("/nextRound", controller.nextRound);
 
 router.get("/round", controller.getRoundNumber);
 
+router.post("/join", controller.joinGame);
+
 module.exports = router;
