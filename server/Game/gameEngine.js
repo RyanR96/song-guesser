@@ -6,7 +6,8 @@ class GameEngine {
     this.totalRounds = 15;
     this.players = {};
     this.correctGuessesThisRound = [];
-    this.roundStartTime;
+    this.roundStartTime = null;
+    this.timer = null;
   }
 
   startGame(songs) {
@@ -20,8 +21,7 @@ class GameEngine {
 
     this.isPlaying = true;
     this.songs = songs;
-    this.currentRound = 1;
-    this.currentSong = songs[0];
+    this.nextRound();
 
     return true;
   }
@@ -68,7 +68,13 @@ class GameEngine {
     this.currentRound++;
     this.currentSong = this.songs[this.currentRound - 1];
     console.log("Current song: ", this.currentSong);
-    return true;
+
+    if (this.timer) clearTimeout(this.timer);
+
+    this.timer = setTimeout(() => {
+      this.nextRound();
+    }, 5000);
+    return true; // This could be removed, as API wont be hitting this function in future
   }
 
   get currentRoundNumber() {
