@@ -8,6 +8,7 @@ class GameEngine {
     this.correctGuessesThisRound = [];
     this.roundStartTime = null;
     this.timer = null;
+    this.songs = [];
   }
 
   startGame(songs) {
@@ -35,6 +36,8 @@ class GameEngine {
       return { error: "Username already exists" };
     }
 
+    //Code for reconnected, don't need now
+
     this.players[username] = { score: 0 };
     console.log(this.players);
 
@@ -43,6 +46,8 @@ class GameEngine {
 
   submitGuess(username, guess) {
     if (!this.isPlaying) return { error: "Game not underway" };
+    if (!this.players[username]) return { error: "Player not in game" };
+
     if (this.correctGuessesThisRound.includes(username))
       return { error: "You've already guessed correctly this round!" };
     if (guess.toLowerCase() === this.currentSong.title.toLowerCase()) {
@@ -61,8 +66,8 @@ class GameEngine {
     this.correctGuessesThisRound = [];
     if (!this.songs) return false;
     if (this.currentRound + 1 > this.songs.length) {
-      this.isPlaying = false;
-      return false;
+      this.endGame();
+      return;
     }
 
     this.currentRound++;
@@ -75,6 +80,13 @@ class GameEngine {
       this.nextRound();
     }, 5000);
     return true; // This could be removed, as API wont be hitting this function in future
+  }
+
+  endGame() {
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+    this.isPlaying = false;
+    console.log("Game ended");
   }
 
   get currentRoundNumber() {
