@@ -20,6 +20,19 @@ class GameEngine {
       return false;
     }
 
+    //reset game
+
+    if (this.timer) clearTimeout(this.timer);
+
+    this.currentRound = 0;
+    this.currentSong = null;
+    this.correctGuessesThisRound = [];
+    this.timer = null;
+    // optional, will need to reset scores though: this.players = {};
+    for (const username in this.players) {
+      this.players[username] = { score: 0 };
+    }
+
     this.isPlaying = true;
     this.songs = songs;
     this.nextRound();
