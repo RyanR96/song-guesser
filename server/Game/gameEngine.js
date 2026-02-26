@@ -88,6 +88,8 @@ class GameEngine {
     this.currentSong = this.songs[this.currentRound - 1];
     console.log("Current song: ", this.currentSong);
 
+    this.roundStartTime = Date.now();
+
     if (this.timer) clearTimeout(this.timer);
 
     this.timer = setTimeout(() => {
@@ -114,6 +116,26 @@ class GameEngine {
     return Object.entries(this.players)
       .sort((a, b) => b[1].score - a[1].score)
       .map(([username, data]) => ({ username, score: data.score }));
+  }
+
+  getState() {
+    if (!this.isPlaying) {
+      return {
+        isPlaying: false,
+        round: this.currentRound,
+        leaderboard: this.getLeaderboard(),
+      };
+    }
+    const elapsed = Date.now() - (this.roundStartTime || Date.now());
+    const timeLeft = Math.max(0, this.roundDuration - elapsed);
+
+    return {
+      isPlaying: true,
+      round: this.currentRound,
+      timeLeft,
+      playersCount: Object.keys(this.players).length,
+      leaderboard: this.getLeaderboard(),
+    };
   }
 }
 

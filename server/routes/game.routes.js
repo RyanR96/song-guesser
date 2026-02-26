@@ -13,4 +13,6 @@ router.get("/round", controller.getRoundNumber);
 
 router.post("/join", controller.joinGame);
 
+router.get("/state", controller.getState);
+
 module.exports = router;

@@ -41,10 +41,15 @@ const joinGame = (req, res) => {
   res.json(result);
 };
 
+const getState = (req, res) => {
+  res.json(game.getState());
+};
+
 module.exports = {
   startGame,
   submitGuess,
   nextRound,
   getRoundNumber,
   joinGame,
+  getState,
 };
