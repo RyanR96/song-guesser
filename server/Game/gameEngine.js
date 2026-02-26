@@ -7,6 +7,7 @@ class GameEngine {
     this.players = {};
     this.correctGuessesThisRound = [];
     this.roundStartTime = null;
+    this.roundDuration = 5000;
     this.timer = null;
     this.songs = [];
   }
@@ -91,7 +92,7 @@ class GameEngine {
 
     this.timer = setTimeout(() => {
       this.nextRound();
-    }, 5000);
+    }, this.roundDuration);
     return true; // This could be removed, as API wont be hitting this function in future
   }
 
@@ -99,11 +100,20 @@ class GameEngine {
     if (this.timer) clearTimeout(this.timer);
     this.timer = null;
     this.isPlaying = false;
+    const leaderboard = this.getLeaderboard();
     console.log("Game ended");
+    console.log(leaderboard);
+    return { leaderboard };
   }
 
   get currentRoundNumber() {
     return this.currentRound;
+  }
+
+  getLeaderboard() {
+    return Object.entries(this.players)
+      .sort((a, b) => b[1].score - a[1].score)
+      .map(([username, data]) => ({ username, score: data.score }));
   }
 }
 
