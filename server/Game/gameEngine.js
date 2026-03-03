@@ -29,6 +29,7 @@ class GameEngine {
     this.currentSong = null;
     this.correctGuessesThisRound = [];
     this.timer = null;
+    this.roundStartTime = null;
     // optional, will need to reset scores though: this.players = {};
     for (const username in this.players) {
       this.players[username] = { score: 0 };
@@ -49,6 +50,8 @@ class GameEngine {
     if (this.players[username]) {
       return { error: "Username already exists" };
     }
+
+    
 
     //Code for reconnected, don't need now
 

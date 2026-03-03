@@ -4,15 +4,36 @@ const prisma = require("./prismaClient");
 const app = express();
 const gameRoutes = require("./routes/game.routes");
 
+const http = require("http");
+const { Server } = require("socket.io");
+const game = require("./Game/gameEngine");
+
 require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
 app.use("/game", gameRoutes);
 
-const PORT = 3000;
+const server = http.createServer(app);
 
-app.listen(PORT, () => {
+const io = new Server(server, {
+  cors: { origin: "*" },
+});
+
+io.on("connection", socket => {
+  console.log("User connected:", socket.id);
+
+  socket.on("join", ({ username }) => {
+    const result = game.joinGame(username);
+
+    socket.emit("joinResult", result);
+    io.emit("state", game.getState());
+  });
+});
+
+const PORT = 3000;
+//server.listen or app.listen?
+server.listen(PORT, () => {
   console.log(`listening on port: ${PORT}`);
 });
 
