@@ -4,14 +4,14 @@ const socket = io("http://localhost:3000");
 
 socket.on("connect", () => {
   console.log("Connected", socket.id);
-  socket.emit("join", { username: "Ryan" });
+  socket.emit("join", { username: "Bryan" });
 
   setTimeout(
-    () => socket.emit("guess", { username: "Ryan", guess: "Wrong answer" }),
+    () => socket.emit("guess", { username: "Bryan", guess: "Wrong answer" }),
     1000,
   );
   setTimeout(
-    () => socket.emit("guess", { username: "Ryan", guess: "Sleepwalking" }),
+    () => socket.emit("guess", { username: "Bryan", guess: "Sleepwalking" }),
     2000,
   );
 });

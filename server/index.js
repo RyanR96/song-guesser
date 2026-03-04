@@ -29,6 +29,17 @@ io.on("connection", socket => {
     socket.emit("joinResult", result);
     io.emit("state", game.getState());
   });
+
+  socket.on("guess", ({ username, guess }) => {
+    const result = game.submitGuess(username, guess);
+
+    socket.emit("guessResult", result);
+    io.emit("state", game.getState());
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id);
+  });
 });
 
 const PORT = 3000;
