@@ -42,6 +42,10 @@ io.on("connection", socket => {
   });
 });
 
+game.onStateChange = state => {
+  io.emit("state", state);
+};
+
 const PORT = 3000;
 //server.listen or app.listen?
 server.listen(PORT, () => {

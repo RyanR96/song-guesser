@@ -10,6 +10,7 @@ class GameEngine {
     this.roundDuration = 5000;
     this.timer = null;
     this.songs = [];
+    this.onStateChange = null;
   }
 
   startGame(songs) {
@@ -50,8 +51,6 @@ class GameEngine {
     if (this.players[username]) {
       return { error: "Username already exists" };
     }
-
-    
 
     //Code for reconnected, don't need now
 
@@ -98,6 +97,8 @@ class GameEngine {
     this.timer = setTimeout(() => {
       this.nextRound();
     }, this.roundDuration);
+
+    if (this.onStateChange) this.onStateChange(this.getState());
     return true; // This could be removed, as API wont be hitting this function in future
   }
 
@@ -108,6 +109,7 @@ class GameEngine {
     const leaderboard = this.getLeaderboard();
     console.log("Game ended");
     console.log(leaderboard);
+    if (this.onStateChange) this.onStateChange(this.getState());
     return { leaderboard };
   }
 
