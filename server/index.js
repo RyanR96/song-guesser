@@ -3,6 +3,7 @@ const cors = require("cors");
 const prisma = require("./prismaClient");
 const app = express();
 const gameRoutes = require("./routes/game.routes");
+const authRoutes = require("./routes/auth.routes");
 
 const http = require("http");
 const { Server } = require("socket.io");
@@ -13,6 +14,7 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 app.use("/game", gameRoutes);
+app.use("/auth", authRoutes);
 
 const server = http.createServer(app);
 
