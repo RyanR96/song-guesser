@@ -4,6 +4,7 @@ const prisma = require("./prismaClient");
 const app = express();
 const gameRoutes = require("./routes/game.routes");
 const authRoutes = require("./routes/auth.routes");
+const jwt = require("jsonwebtoken");
 
 const http = require("http");
 const { Server } = require("socket.io");
@@ -22,14 +23,60 @@ const io = new Server(server, {
   cors: { origin: "*" },
 });
 
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    console.log("handshake token", token);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.data.user = decoded;
+    console.log("decoded user", socket.data.user);
+    next();
+  } catch (err) {
+    console.log("Invalid token");
+    return next(new Error("Invalid token"));
+  }
+});
+
 io.on("connection", socket => {
   console.log("User connected:", socket.id);
 
-  socket.on("join", ({ username }) => {
-    const result = game.joinGame(username);
+  socket.on("join", async ({ username }) => {
+    console.log("join request, username:", username);
 
-    socket.emit("joinResult", result);
-    io.emit("state", game.getState());
+    try {
+      if (socket.data.user) {
+        console.log("socket user:", socket.data.user);
+        const claimedUsername = socket.data.user.username;
+        const result = game.joinGame(claimedUsername);
+        socket.emit("joinResult", result);
+        io.emit("state", game.getState());
+        return;
+      }
+
+      const existingUser = await prisma.user.findUnique({
+        where: { username },
+      });
+
+      if (existingUser) {
+        socket.emit("joinResult", {
+          error: "Username already exists",
+        });
+        return;
+      }
+
+      const result = game.joinGame(username);
+
+      socket.emit("joinResult", result);
+      io.emit("state", game.getState());
+    } catch (err) {
+      console.error(err);
+      socket.emit("joinResult", { error: "Server error joining game" });
+    }
   });
 
   socket.on("guess", ({ username, guess }) => {

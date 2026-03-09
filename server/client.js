@@ -1,17 +1,21 @@
 const { io } = require("socket.io-client");
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3000", {
+  auth: {
+    token: "",
+  },
+});
 
 socket.on("connect", () => {
   console.log("Connected", socket.id);
-  socket.emit("join", { username: "Ryan" });
+  socket.emit("join", { username: "c" });
 
   setTimeout(
-    () => socket.emit("guess", { username: "Ryan", guess: "Wrong answer" }),
+    () => socket.emit("guess", { username: "c", guess: "Wrong answer" }),
     1000,
   );
   setTimeout(
-    () => socket.emit("guess", { username: "Ryan", guess: "Sleepwalking" }),
+    () => socket.emit("guess", { username: "c", guess: "Sleepwalking" }),
     2000,
   );
 });

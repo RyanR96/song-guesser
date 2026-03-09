@@ -49,7 +49,7 @@ class GameEngine {
     }
 
     if (this.players[username]) {
-      return { error: "Username already exists" };
+      return { error: "Username already in the game" };
     }
 
     //Code for reconnected, don't need now
