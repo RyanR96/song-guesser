@@ -33,7 +33,7 @@ class GameEngine {
     this.roundStartTime = null;
     // optional, will need to reset scores though: this.players = {};
     for (const username in this.players) {
-      this.players[username] = { score: 0 };
+      this.players[username].score = 0;
     }
 
     this.isPlaying = true;
@@ -43,7 +43,7 @@ class GameEngine {
     return true;
   }
 
-  joinGame(username) {
+  joinGame({ username, isRegistered, userId }) {
     if (!username) {
       return { error: "Username required" };
     }
@@ -54,7 +54,11 @@ class GameEngine {
 
     //Code for reconnected, don't need now
 
-    this.players[username] = { score: 0 };
+    this.players[username] = {
+      score: 0,
+      isRegistered,
+      userId,
+    };
     console.log(this.players);
 
     return { success: true };
@@ -109,6 +113,8 @@ class GameEngine {
     const leaderboard = this.getLeaderboard();
     console.log("Game ended");
     console.log(leaderboard);
+    console.log(this.players);
+
     if (this.onStateChange) this.onStateChange(this.getState());
     return { leaderboard };
   }

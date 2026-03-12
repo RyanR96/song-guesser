@@ -51,8 +51,12 @@ io.on("connection", socket => {
     try {
       if (socket.data.user) {
         console.log("socket user:", socket.data.user);
-        const claimedUsername = socket.data.user.username;
-        const result = game.joinGame(claimedUsername);
+
+        const result = game.joinGame({
+          username: socket.data.user.username,
+          isRegistered: true,
+          userId: socket.data.user.id,
+        });
         socket.emit("joinResult", result);
         io.emit("state", game.getState());
         return;
@@ -69,7 +73,11 @@ io.on("connection", socket => {
         return;
       }
 
-      const result = game.joinGame(username);
+      const result = game.joinGame({
+        username: username,
+        isRegistered: false,
+        userId: null,
+      });
 
       socket.emit("joinResult", result);
       io.emit("state", game.getState());
