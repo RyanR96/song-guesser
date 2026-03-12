@@ -119,6 +119,15 @@ class GameEngine {
     return { leaderboard };
   }
 
+  leaveGame(username) {
+    if (!username || !this.players[username]) {
+      return false;
+    }
+
+    delete this.players[username];
+    return true;
+  }
+
   get currentRoundNumber() {
     return this.currentRound;
   }

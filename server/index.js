@@ -50,13 +50,19 @@ io.on("connection", socket => {
 
     try {
       if (socket.data.user) {
+        const claimedUsername = socket.data.user.username;
         console.log("socket user:", socket.data.user);
 
         const result = game.joinGame({
-          username: socket.data.user.username,
+          username: claimedUsername,
           isRegistered: true,
           userId: socket.data.user.id,
         });
+
+        if (result.success) {
+          socket.data.username = claimedUsername;
+          console.log("2nd datausername for registered:", socket.data.username);
+        }
         socket.emit("joinResult", result);
         io.emit("state", game.getState());
         return;
@@ -79,6 +85,11 @@ io.on("connection", socket => {
         userId: null,
       });
 
+      if (result.success) {
+        socket.data.username = username;
+        console.log("datausername for NON registered:", socket.data.username);
+      }
+
       socket.emit("joinResult", result);
       io.emit("state", game.getState());
     } catch (err) {
@@ -88,6 +99,7 @@ io.on("connection", socket => {
   });
 
   socket.on("guess", ({ username, guess }) => {
+    //change this when I next see, so username isn't a parameter - let server decide username
     const result = game.submitGuess(username, guess);
 
     socket.emit("guessResult", result);
@@ -95,6 +107,15 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
+    const username = socket.data.username;
+
+    if (username) {
+      const removed = game.leaveGame(username);
+      if (removed) {
+        io.emit("playerLeft", { username });
+        io.emit("state", game.getState());
+      }
+    }
     console.log("User disconnected", socket.id);
   });
 });
