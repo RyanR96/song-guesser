@@ -98,8 +98,9 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("guess", ({ username, guess }) => {
-    //change this when I next see, so username isn't a parameter - let server decide username
+  socket.on("guess", ({ guess }) => {
+    const username = socket.data.username;
+
     const result = game.submitGuess(username, guess);
 
     socket.emit("guessResult", result);
