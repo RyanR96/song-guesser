@@ -125,6 +125,46 @@ game.onStateChange = state => {
   io.emit("state", state);
 };
 
+game.onGameOver = async ({ leaderboard, players }) => {
+  try {
+    for (const username in players) {
+      const player = players[username];
+
+      if (!player.isRegistered) continue;
+
+      await prisma.user.update({
+        where: { id: player.userId },
+        data: {
+          totalPoints: { increment: player.score },
+        },
+      });
+    }
+
+    const winner = leaderboard[0];
+
+    if (winner) {
+      const winningPlayer = players[winner.username];
+
+      if (winningPlayer?.isRegistered && winningPlayer?.score > 0) {
+        console.log(
+          "IS registered, so increment this users wins:",
+          winner.username,
+        );
+        await prisma.user.update({
+          where: { id: winningPlayer.userId },
+          data: {
+            gamesWon: {
+              increment: 1,
+            },
+          },
+        });
+      }
+    }
+  } catch (err) {
+    console.error("Failed to save end game data");
+  }
+};
+
 const PORT = 3000;
 //server.listen or app.listen?
 server.listen(PORT, () => {

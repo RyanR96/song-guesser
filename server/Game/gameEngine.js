@@ -11,6 +11,7 @@ class GameEngine {
     this.timer = null;
     this.songs = [];
     this.onStateChange = null;
+    this.onGameOver = null;
   }
 
   startGame(songs) {
@@ -116,6 +117,12 @@ class GameEngine {
     console.log(this.players);
 
     if (this.onStateChange) this.onStateChange(this.getState());
+    if (this.onGameOver) {
+      this.onGameOver({
+        leaderboard,
+        players: this.players,
+      });
+    }
     return { leaderboard };
   }
 
