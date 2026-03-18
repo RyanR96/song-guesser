@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Homepage from "./Pages/Homepage";
+import Gamepage from "./Pages/Gamepage";
 
 function App() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">Hello World!</h1>
-    </div>
+    <Routes>
+      <Route path="/" element={<Homepage />} />
+      <Route path="/game" element={<Gamepage />} />
+    </Routes>
   );
 }
 
