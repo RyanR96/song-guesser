@@ -15,6 +15,7 @@ function joinModal(props) {
     }
 
     console.log("You are:", username.trim());
+    localStorage.setItem("guestUsername", username);
     onJoinSuccess();
   }
 
