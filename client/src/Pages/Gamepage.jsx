@@ -3,6 +3,7 @@ import { socket } from "../socket";
 
 function Gamepage() {
   const [error, setError] = useState("");
+  const [gameState, setGameState] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,6 +26,7 @@ function Gamepage() {
     }
 
     function handleConnect() {
+      // need to add token join
       if (guestUsername) {
         socket.emit("join", { username: guestUsername });
       } else {
@@ -32,16 +34,42 @@ function Gamepage() {
       }
     }
 
+    function handleJoinResult(data) {
+      if (!data.success) {
+        setError(data.error);
+        if (data.error === "Username already exists") {
+          localStorage.removeItem("guestUsername");
+          alert("Placeholder, send user back");
+        }
+      }
+    }
+
+    function getState(data) {
+      setGameState(data);
+      console.log(data);
+    }
+
     socket.on("connect", handleConnect);
+    socket.on("joinResult", handleJoinResult);
+    socket.on("state", getState);
 
     return () => {
       socket.off("connect", handleConnect);
+      socket.off("joinResult", handleJoinResult);
+      socket.off("state", getState);
       socket.disconnect();
     };
   }, []);
+
+  if (error) return <div>{error}</div>;
+
+  if (!gameState) return <div>Loading game</div>;
   return (
-    <div>
+    <div className="text-center">
       <h1 className="text-3xl font-bold underline">Gamepage!</h1>
+
+      <p>{gameState.timeLeft}</p>
+      <p>{gameState.round}</p>
     </div>
   );
 }
