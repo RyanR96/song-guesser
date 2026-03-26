@@ -4,6 +4,8 @@ import { socket } from "../socket";
 function Gamepage() {
   const [error, setError] = useState("");
   const [gameState, setGameState] = useState(null);
+  const [gameOverData, setGameOverData] = useState(null);
+  const [guessFeedback, setGuessFeedback] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -49,17 +51,35 @@ function Gamepage() {
       console.log(data);
     }
 
+    function handleGameOver(data) {
+      setGameOverData(data);
+      console.log("GameOver data:", data);
+    }
+
+    function handleGuessFeedback(data) {
+      setGuessFeedback(data);
+      console.log(data);
+    }
+
     socket.on("connect", handleConnect);
     socket.on("joinResult", handleJoinResult);
     socket.on("state", getState);
+    socket.on("guessResult", handleGuessFeedback);
+    socket.on("gameOver", handleGameOver);
 
     return () => {
       socket.off("connect", handleConnect);
       socket.off("joinResult", handleJoinResult);
       socket.off("state", getState);
+      socket.off("guessResult", handleGuessFeedback);
+      socket.off("gameOver", handleGameOver);
       socket.disconnect();
     };
   }, []);
+
+  function handleGuessSubmit(guess) {
+    socket.emit("guess", { guess });
+  }
 
   if (error) return <div>{error}</div>;
 
@@ -70,6 +90,26 @@ function Gamepage() {
 
       <p>{gameState.timeLeft}</p>
       <p>{gameState.round}</p>
+
+      <button
+        className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
+        onClick={() => handleGuessSubmit("Sleepwalking")}
+      >
+        Guess
+      </button>
+
+      {guessFeedback && <p>{guessFeedback.message}</p>}
+
+      {gameOverData && (
+        <div>
+          <p>Game Over!</p>
+          {gameOverData.leaderboard.map((player, index) => (
+            <div key={player.username}>
+              {index + 1}. {player.username} : {player.score}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

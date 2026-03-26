@@ -160,6 +160,7 @@ game.onGameOver = async ({ leaderboard, players }) => {
         });
       }
     }
+    io.emit("gameOver", { leaderboard });
   } catch (err) {
     console.error("Failed to save end game data");
   }

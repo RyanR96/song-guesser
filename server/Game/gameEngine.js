@@ -66,21 +66,30 @@ class GameEngine {
   }
 
   submitGuess(username, guess) {
-    if (!this.isPlaying) return { error: "Game not underway" };
-    if (!this.players[username]) return { error: "Player not in game" };
+    if (!this.isPlaying)
+      return { correct: false, message: "Game not underway" };
+    if (!this.players[username])
+      return { correct: false, message: "Player not in game" };
 
     if (this.correctGuessesThisRound.includes(username))
-      return { error: "You've already guessed correctly this round!" };
+      return {
+        correct: false,
+        message: "You've already guessed correctly this round!",
+      };
     if (guess.toLowerCase() === this.currentSong.title.toLowerCase()) {
       this.correctGuessesThisRound.push(username);
       let points = 10;
       this.players[username].score += points;
       // Add points based on time they got answer right, aka change it later
 
-      return { correct: true, score: this.players[username].score };
+      return {
+        correct: true,
+        message: "Correct answer!",
+        score: this.players[username].score,
+      };
     }
 
-    return { correct: false };
+    return { correct: false, message: "Wrong answer!" };
   }
 
   nextRound() {
