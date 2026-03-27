@@ -6,6 +6,7 @@ function Gamepage() {
   const [gameState, setGameState] = useState(null);
   const [gameOverData, setGameOverData] = useState(null);
   const [guessFeedback, setGuessFeedback] = useState("");
+  const [displayTimer, setDisplayTimer] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -77,6 +78,22 @@ function Gamepage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (gameState?.timeLeft == null) return;
+
+    setDisplayTimer(gameState.timeLeft);
+
+    const interval = setInterval(() => {
+      setDisplayTimer(prev => {
+        setDisplayTimer(Math.max(0, prev - 100));
+      });
+    }, 100);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [gameState?.round, gameState?.timeLeft]);
+
   function handleGuessSubmit(guess) {
     socket.emit("guess", { guess });
   }
@@ -88,7 +105,7 @@ function Gamepage() {
     <div className="text-center">
       <h1 className="text-3xl font-bold underline">Gamepage!</h1>
 
-      <p>{gameState.timeLeft}</p>
+      <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
       <p>{gameState.round}</p>
 
       <button
