@@ -7,6 +7,7 @@ function Gamepage() {
   const [gameOverData, setGameOverData] = useState(null);
   const [guessFeedback, setGuessFeedback] = useState("");
   const [displayTimer, setDisplayTimer] = useState(0);
+  const [guess, setGuess] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -94,8 +95,15 @@ function Gamepage() {
     };
   }, [gameState?.round, gameState?.timeLeft]);
 
-  function handleGuessSubmit(guess) {
+  function handleGuessSubmit(e) {
+    e.preventDefault();
+
+    if (!guess.trim()) return;
+
+    console.log(e.target.value);
+
     socket.emit("guess", { guess });
+    setGuess("");
   }
 
   if (error) return <div>{error}</div>;
@@ -108,12 +116,20 @@ function Gamepage() {
       <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
       <p>{gameState.round}</p>
 
-      <button
-        className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
-        onClick={() => handleGuessSubmit("Sleepwalking")}
-      >
-        Guess
-      </button>
+      <form onSubmit={handleGuessSubmit}>
+        <input
+          placeholder="Enter guess here"
+          className="border-2 border-black"
+          onChange={e => setGuess(e.target.value)}
+          value={guess}
+        ></input>
+        <button
+          type="submit"
+          className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
+        >
+          Guess
+        </button>
+      </form>
 
       {guessFeedback && <p>{guessFeedback.message}</p>}
 
