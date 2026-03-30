@@ -50,7 +50,12 @@ function Gamepage() {
 
     function getState(data) {
       setGameState(data);
-      console.log(data);
+
+      //sets gameOverData to null each time a new game is started. Not the best place to put it! But will do for now
+      if (data.isPlaying && gameOverData !== null) {
+        setGameOverData(null);
+      }
+      console.log("Game state Data:", data);
     }
 
     function handleGameOver(data) {
@@ -133,15 +138,23 @@ function Gamepage() {
 
       {guessFeedback && <p>{guessFeedback.message}</p>}
 
-      {gameOverData && (
-        <div>
+      <ul className="space-y-2 text-left mx-20">
+        {gameState?.leaderboard?.map((player, index) => (
+          <li key={player.username}>
+            {index + 1}. {player.username} : {player.score}
+          </li>
+        ))}
+      </ul>
+
+      {gameOverData && !gameState.isPlaying && (
+        <ul>
           <p>Game Over!</p>
           {gameOverData.leaderboard.map((player, index) => (
-            <div key={player.username}>
+            <li key={player.username}>
               {index + 1}. {player.username} : {player.score}
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
