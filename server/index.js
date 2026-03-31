@@ -23,6 +23,27 @@ const io = new Server(server, {
   cors: { origin: "*" },
 });
 
+let lobbyTimer = null;
+
+function startLobbyCountdown() {
+  if (game.isPlaying) return;
+  if (Object.keys(game.players).length === 0) return;
+  if (lobbyTimer) return;
+  console.log(Object.keys(game.players).length);
+
+  lobbyTimer = setTimeout(async () => {
+    lobbyTimer = null;
+
+    if (!game.isPlaying && Object.keys(game.players).length > 0) {
+      const songs = await prisma.song.findMany({
+        take: 3,
+      });
+      game.startGame(songs);
+      console.log(songs);
+    }
+  }, 1000);
+}
+
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token;
 
@@ -62,6 +83,7 @@ io.on("connection", socket => {
         if (result.success) {
           socket.data.username = claimedUsername;
           console.log("2nd datausername for registered:", socket.data.username);
+          startLobbyCountdown();
         }
         socket.emit("joinResult", result);
         io.emit("state", game.getState());
@@ -88,6 +110,7 @@ io.on("connection", socket => {
       if (result.success) {
         socket.data.username = username;
         console.log("datausername for NON registered:", socket.data.username);
+        startLobbyCountdown();
       }
 
       socket.emit("joinResult", result);
