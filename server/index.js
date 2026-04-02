@@ -24,6 +24,7 @@ const io = new Server(server, {
 });
 
 let lobbyTimer = null;
+let lobbyDuration = 5000;
 
 function startLobbyCountdown() {
   if (game.isPlaying) return;
@@ -31,8 +32,18 @@ function startLobbyCountdown() {
   if (lobbyTimer) return;
   console.log(Object.keys(game.players).length);
 
+  io.emit("lobbyState", {
+    isCountingDown: true,
+    timeLeft: lobbyDuration,
+  });
+
   lobbyTimer = setTimeout(async () => {
     lobbyTimer = null;
+
+    io.emit("lobbyState", {
+      isCountingDown: false,
+      timeLeft: 0,
+    });
 
     if (!game.isPlaying && Object.keys(game.players).length > 0) {
       const songs = await prisma.song.findMany({
@@ -41,7 +52,7 @@ function startLobbyCountdown() {
       game.startGame(songs);
       console.log(songs);
     }
-  }, 1000);
+  }, lobbyDuration);
 }
 
 io.use((socket, next) => {

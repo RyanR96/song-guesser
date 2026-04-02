@@ -8,6 +8,8 @@ function Gamepage() {
   const [guessFeedback, setGuessFeedback] = useState("");
   const [displayTimer, setDisplayTimer] = useState(0);
   const [guess, setGuess] = useState("");
+  const [lobbyState, setLobbyState] = useState(null);
+  const [nextGameTimer, setNextGameTimer] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -68,11 +70,17 @@ function Gamepage() {
       console.log(data);
     }
 
+    function handleLobbyState(data) {
+      console.log("Lobby state", data);
+      setLobbyState(data);
+    }
+
     socket.on("connect", handleConnect);
     socket.on("joinResult", handleJoinResult);
     socket.on("state", getState);
     socket.on("guessResult", handleGuessFeedback);
     socket.on("gameOver", handleGameOver);
+    socket.on("lobbyState", handleLobbyState);
 
     return () => {
       socket.off("connect", handleConnect);
@@ -80,19 +88,36 @@ function Gamepage() {
       socket.off("state", getState);
       socket.off("guessResult", handleGuessFeedback);
       socket.off("gameOver", handleGameOver);
+      socket.off("lobbyState", handleLobbyState);
       socket.disconnect();
     };
   }, []);
 
+  // Next game starting timer
+  useEffect(() => {
+    if (!lobbyState?.isCountingDown) return;
+    if (lobbyState?.timeLeft == null) return;
+
+    setNextGameTimer(lobbyState.timeLeft);
+
+    const interval = setInterval(() => {
+      setNextGameTimer(prev => Math.max(0, prev - 100));
+      console.log(nextGameTimer);
+    }, 100);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [lobbyState?.isCountingDown, lobbyState?.timeLeft]);
+
+  // Round timer
   useEffect(() => {
     if (gameState?.timeLeft == null) return;
 
     setDisplayTimer(gameState.timeLeft);
 
     const interval = setInterval(() => {
-      setDisplayTimer(prev => {
-        setDisplayTimer(Math.max(0, prev - 100));
-      });
+      setDisplayTimer(prev => Math.max(0, prev - 100));
     }, 100);
 
     return () => {
@@ -119,6 +144,8 @@ function Gamepage() {
       <h1 className="text-3xl font-bold underline">Gamepage!</h1>
 
       <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
+      <p>Time until next game start: {Math.ceil(nextGameTimer / 1000)}</p>
+
       <p>{gameState.round}</p>
 
       <form onSubmit={handleGuessSubmit}>
