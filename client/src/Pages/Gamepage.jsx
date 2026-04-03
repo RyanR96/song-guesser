@@ -95,7 +95,10 @@ function Gamepage() {
 
   // Next game starting timer
   useEffect(() => {
-    if (!lobbyState?.isCountingDown) return;
+    if (!lobbyState?.isCountingDown) {
+      setNextGameTimer(0);
+      return;
+    }
     if (lobbyState?.timeLeft == null) return;
 
     setNextGameTimer(lobbyState.timeLeft);
@@ -144,7 +147,10 @@ function Gamepage() {
       <h1 className="text-3xl font-bold underline">Gamepage!</h1>
 
       <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
-      <p>Time until next game start: {Math.ceil(nextGameTimer / 1000)}</p>
+
+      {nextGameTimer > 0 && (
+        <p>Time until next game start: {Math.ceil(nextGameTimer / 1000)}</p>
+      )}
 
       <p>{gameState.round}</p>
 
