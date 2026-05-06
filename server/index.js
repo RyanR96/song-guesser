@@ -46,11 +46,22 @@ function startLobbyCountdown() {
     });
 
     if (!game.isPlaying && Object.keys(game.players).length > 0) {
-      const songs = await prisma.song.findMany({
+      /**
+       *       const songs = await prisma.song.findMany({
         take: 3,
       });
+       */
+
+      const songs = await prisma.$queryRaw`
+      SELECT *
+      FROM "Song"
+      WHERE "previewUrl" IS NOT NULL
+      ORDER BY RANDOM()
+      LIMIT 3
+      `;
+
       game.startGame(songs);
-      console.log(songs);
+      console.log("The songs that are passed into game", songs);
     }
   }, lobbyDuration);
 }
@@ -195,6 +206,7 @@ game.onGameOver = async ({ leaderboard, players }) => {
       }
     }
     io.emit("gameOver", { leaderboard });
+    startLobbyCountdown();
   } catch (err) {
     console.error("Failed to save end game data");
   }
