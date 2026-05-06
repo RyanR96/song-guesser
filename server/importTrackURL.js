@@ -1,6 +1,7 @@
 const prisma = require("./prismaClient");
 
 async function importTrackURL() {
+  let count = 0;
   const songs = await prisma.song.findMany({
     where: {
       previewUrl: null,
@@ -8,6 +9,8 @@ async function importTrackURL() {
   });
 
   for (const song of songs) {
+    count++;
+    console.log(`Processing ${count}/${songs.length} : ${song.title}`);
     const query = encodeURIComponent(`${song.title} ${song.artist[0]}`);
 
     const response = await fetch(
@@ -16,8 +19,9 @@ async function importTrackURL() {
 
     const data = await response.json();
 
-    if (!data.results) {
+    if (!data.results || data.results.length === 0) {
       console.log("Failed to find URLs for song:", song.title);
+      continue;
     }
 
     await prisma.song.update({
@@ -30,19 +34,13 @@ async function importTrackURL() {
         trackViewUrl: data.results[0].trackViewUrl,
       },
     });
+
+    await sleep(3500);
   }
+}
 
-  /** 
-  const query = encodeURIComponent(`${title} ${artist}`);
-
-  const response = await fetch(
-    `https://itunes.apple.com/search?term=${query}&media=music&entity=song&limit=1`,
-  );
-
-  const data = await response.json();
-
-  console.dir(data.results, { depth: null });
-  */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 importTrackURL();
