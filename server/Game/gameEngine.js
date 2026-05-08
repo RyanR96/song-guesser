@@ -171,6 +171,7 @@ class GameEngine {
       timeLeft,
       playersCount: Object.keys(this.players).length,
       leaderboard: this.getLeaderboard(),
+      previewUrl: this.currentSong.previewUrl,
     };
   }
 }

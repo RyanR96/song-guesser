@@ -128,6 +128,23 @@ function Gamepage() {
     };
   }, [gameState?.round, gameState?.timeLeft]);
 
+  // responsible for playing audio
+  useEffect(() => {
+    if (!gameState?.previewUrl) return;
+
+    const audio = new Audio(gameState.previewUrl);
+    audio.play().catch(error => {
+      console.log("Audio failed to play", error);
+    });
+
+    console.log(gameState.previewUrl);
+
+    return () => {
+      audio.pause();
+      audio.src = "";
+    };
+  }, [gameState?.previewUrl]);
+
   function handleGuessSubmit(e) {
     e.preventDefault();
 
