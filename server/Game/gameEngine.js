@@ -12,6 +12,9 @@ class GameEngine {
     this.songs = [];
     this.onStateChange = null;
     this.onGameOver = null;
+    // Prep phase (Time inbetween songs playing)
+    this.roundPrepDuration = 3000;
+    this.prepTimer = null;
   }
 
   startGame(songs) {
@@ -26,11 +29,13 @@ class GameEngine {
     //reset game
 
     if (this.timer) clearTimeout(this.timer);
+    if (this.prepTimer) clearTimeout(this.prepTimer);
 
     this.currentRound = 0;
     this.currentSong = null;
     this.correctGuessesThisRound = [];
     this.timer = null;
+    this.prepTimer = null;
     this.roundStartTime = null;
     // optional, will need to reset scores though: this.players = {};
     for (const username in this.players) {
@@ -94,7 +99,9 @@ class GameEngine {
 
   nextRound() {
     this.correctGuessesThisRound = [];
+
     if (!this.songs) return false;
+
     if (this.currentRound + 1 > this.songs.length) {
       this.endGame();
       return;
@@ -103,6 +110,20 @@ class GameEngine {
     this.currentRound++;
     this.currentSong = this.songs[this.currentRound - 1];
     console.log("Current song: ", this.currentSong);
+
+    if (this.timer) clearTimeout(this.timer);
+    if (this.prepTimer) clearTimeout(this.timer);
+
+    this.prepTimer = setTimeout(() => {
+      this.startRound();
+    }, this.roundPrepDuration);
+
+    if (this.onStateChange) this.onStateChange(this.getState());
+    return true; // This could be removed, as API wont be hitting this function in future
+  }
+
+  startRound() {
+    if (!this.isPlaying || !this.currentSong) return false;
 
     this.roundStartTime = Date.now();
 
@@ -113,12 +134,14 @@ class GameEngine {
     }, this.roundDuration);
 
     if (this.onStateChange) this.onStateChange(this.getState());
-    return true; // This could be removed, as API wont be hitting this function in future
   }
 
   endGame() {
     if (this.timer) clearTimeout(this.timer);
+    if (this.prepTimer) clearTimeout(this.timer);
+
     this.timer = null;
+    this.prepTimer = null;
     this.isPlaying = false;
     const leaderboard = this.getLeaderboard();
     console.log("Game ended");
