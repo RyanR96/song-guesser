@@ -15,6 +15,7 @@ class GameEngine {
     // Prep phase (Time inbetween songs playing)
     this.roundPrepDuration = 3000;
     this.prepTimer = null;
+    this.roundPhase = null;
   }
 
   startGame(songs) {
@@ -37,6 +38,7 @@ class GameEngine {
     this.timer = null;
     this.prepTimer = null;
     this.roundStartTime = null;
+    this.roundPhase = null;
     // optional, will need to reset scores though: this.players = {};
     for (const username in this.players) {
       this.players[username].score = 0;
@@ -110,6 +112,7 @@ class GameEngine {
     this.currentRound++;
     this.currentSong = this.songs[this.currentRound - 1];
     console.log("Current song: ", this.currentSong);
+    this.roundPhase = "preparing";
 
     if (this.timer) clearTimeout(this.timer);
     if (this.prepTimer) clearTimeout(this.timer);
@@ -129,6 +132,8 @@ class GameEngine {
 
     if (this.timer) clearTimeout(this.timer);
 
+    this.roundPhase = "playing";
+
     this.timer = setTimeout(() => {
       this.nextRound();
     }, this.roundDuration);
@@ -143,6 +148,7 @@ class GameEngine {
     this.timer = null;
     this.prepTimer = null;
     this.isPlaying = false;
+    this.roundPhase = null;
     const leaderboard = this.getLeaderboard();
     console.log("Game ended");
     console.log(leaderboard);
@@ -182,15 +188,21 @@ class GameEngine {
       return {
         isPlaying: false,
         round: this.currentRound,
+        roundPhase: this.roundPhase,
         leaderboard: this.getLeaderboard(),
       };
     }
-    const elapsed = Date.now() - (this.roundStartTime || Date.now());
-    const timeLeft = Math.max(0, this.roundDuration - elapsed);
+    let timeLeft = 0;
+
+    if (this.roundPhase === "playing") {
+      const elapsed = Date.now() - (this.roundStartTime || Date.now());
+      timeLeft = Math.max(0, this.roundDuration - elapsed);
+    }
 
     return {
       isPlaying: true,
       round: this.currentRound,
+      roundPhase: this.roundPhase,
       timeLeft,
       playersCount: Object.keys(this.players).length,
       leaderboard: this.getLeaderboard(),

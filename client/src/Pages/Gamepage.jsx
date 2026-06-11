@@ -131,6 +131,7 @@ function Gamepage() {
   // responsible for playing audio
   useEffect(() => {
     if (!gameState?.previewUrl) return;
+    if (gameState?.roundPhase !== "playing") return;
 
     const audio = new Audio(gameState.previewUrl);
     audio.play().catch(error => {
@@ -143,7 +144,7 @@ function Gamepage() {
       audio.pause();
       audio.src = "";
     };
-  }, [gameState?.previewUrl]);
+  }, [gameState?.previewUrl, gameState?.roundPhase]);
 
   function handleGuessSubmit(e) {
     e.preventDefault();
@@ -169,7 +170,7 @@ function Gamepage() {
         <p>Time until next game start: {Math.ceil(nextGameTimer / 1000)}</p>
       )}
 
-      <p>{gameState.round}</p>
+      <p>Round: {gameState.round}</p>
 
       <form onSubmit={handleGuessSubmit}>
         <input
