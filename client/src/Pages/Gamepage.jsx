@@ -164,7 +164,9 @@ function Gamepage() {
     <div className="text-center">
       <h1 className="text-3xl font-bold underline">Gamepage!</h1>
 
-      <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
+      {gameState.roundPhase === "playing" && (
+        <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
+      )}
 
       {nextGameTimer > 0 && (
         <p>Time until next game start: {Math.ceil(nextGameTimer / 1000)}</p>

@@ -16,6 +16,7 @@ class GameEngine {
     this.roundPrepDuration = 3000;
     this.prepTimer = null;
     this.roundPhase = null;
+    this.prepStartTime = null;
   }
 
   startGame(songs) {
@@ -37,6 +38,7 @@ class GameEngine {
     this.correctGuessesThisRound = [];
     this.timer = null;
     this.prepTimer = null;
+    this.prepStartTime = null;
     this.roundStartTime = null;
     this.roundPhase = null;
     // optional, will need to reset scores though: this.players = {};
@@ -113,6 +115,7 @@ class GameEngine {
     this.currentSong = this.songs[this.currentRound - 1];
     console.log("Current song: ", this.currentSong);
     this.roundPhase = "preparing";
+    this.roundStartTime = Date.now();
 
     if (this.timer) clearTimeout(this.timer);
     if (this.prepTimer) clearTimeout(this.timer);
@@ -193,10 +196,16 @@ class GameEngine {
       };
     }
     let timeLeft = 0;
+    let prepTime = 0;
 
     if (this.roundPhase === "playing") {
       const elapsed = Date.now() - (this.roundStartTime || Date.now());
       timeLeft = Math.max(0, this.roundDuration - elapsed);
+    }
+
+    if (this.roundPhase === "preparing") {
+      const elapsed = Date.now() - (this.prepStartTime || Date.now());
+      prepTime = Math.max(0, this.roundPrepDuration - elapsed);
     }
 
     return {
@@ -204,6 +213,7 @@ class GameEngine {
       round: this.currentRound,
       roundPhase: this.roundPhase,
       timeLeft,
+      prepTime,
       playersCount: Object.keys(this.players).length,
       leaderboard: this.getLeaderboard(),
       previewUrl: this.currentSong.previewUrl,
