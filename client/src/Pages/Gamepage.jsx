@@ -10,6 +10,7 @@ function Gamepage() {
   const [guess, setGuess] = useState("");
   const [lobbyState, setLobbyState] = useState(null);
   const [nextGameTimer, setNextGameTimer] = useState(0);
+  const [nextSongTimer, setNextSongTimer] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -93,6 +94,23 @@ function Gamepage() {
     };
   }, []);
 
+  // Prep timer/ NextSongTimer
+
+  useEffect(() => {
+    if (gameState?.prepTime == null) return;
+
+    setNextSongTimer(gameState.prepTime);
+
+    const interval = setInterval(() => {
+      setNextSongTimer(prev => Math.max(0, prev - 100));
+      console.log(nextSongTimer);
+    }, 100);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [gameState?.round, gameState?.roundPhase, gameState?.prepTime]);
+
   // Next game starting timer
   useEffect(() => {
     if (!lobbyState?.isCountingDown) {
@@ -166,6 +184,13 @@ function Gamepage() {
 
       {gameState.roundPhase === "playing" && (
         <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
+      )}
+
+      {gameState.roundPhase === "preparing" && (
+        <p>
+          Get ready! Song will start playing in:{" "}
+          {Math.ceil(nextSongTimer / 1000)}{" "}
+        </p>
       )}
 
       {nextGameTimer > 0 && (
