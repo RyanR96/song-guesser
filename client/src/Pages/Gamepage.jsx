@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { socket } from "../socket";
 
 function Gamepage() {
@@ -11,6 +11,7 @@ function Gamepage() {
   const [lobbyState, setLobbyState] = useState(null);
   const [nextGameTimer, setNextGameTimer] = useState(0);
   const [nextSongTimer, setNextSongTimer] = useState(0);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -98,6 +99,10 @@ function Gamepage() {
 
   useEffect(() => {
     if (gameState?.prepTime == null) return;
+    if (gameState?.roundPhase !== "preparing") {
+      setNextSongTimer(0);
+      return;
+    }
 
     setNextSongTimer(gameState.prepTime);
 
@@ -146,12 +151,36 @@ function Gamepage() {
     };
   }, [gameState?.round, gameState?.timeLeft]);
 
-  // responsible for playing audio
+  // Preloading audio
+
   useEffect(() => {
     if (!gameState?.previewUrl) return;
-    if (gameState?.roundPhase !== "playing") return;
 
     const audio = new Audio(gameState.previewUrl);
+    audio.preload = "auto";
+    audio.load();
+
+    audioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audio.src = "";
+
+      if (audioRef.current === audio) {
+        audioRef.current = null;
+      }
+    };
+  }, [gameState?.round, gameState?.previewUrl]);
+
+  // responsible for playing audio
+  useEffect(() => {
+    if (gameState?.roundPhase !== "playing") return;
+    if (!audioRef.current) return;
+
+    const audio = audioRef.current;
+
+    audio.currentTime = 0;
+
     audio.play().catch(error => {
       console.log("Audio failed to play", error);
     });
@@ -160,9 +189,8 @@ function Gamepage() {
 
     return () => {
       audio.pause();
-      audio.src = "";
     };
-  }, [gameState?.previewUrl, gameState?.roundPhase]);
+  }, [gameState?.round, gameState?.roundPhase]);
 
   function handleGuessSubmit(e) {
     e.preventDefault();
