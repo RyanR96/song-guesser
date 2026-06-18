@@ -56,7 +56,7 @@ function Gamepage() {
       setGameState(data);
 
       //sets gameOverData to null each time a new game is started. Not the best place to put it! But will do for now
-      if (data.isPlaying && gameOverData !== null) {
+      if (data.isPlaying) {
         setGameOverData(null);
       }
       console.log("Game state Data:", data);
@@ -139,6 +139,10 @@ function Gamepage() {
   // Round timer
   useEffect(() => {
     if (gameState?.timeLeft == null) return;
+    if (gameState?.roundPhase !== "playing") {
+      setDisplayTimer(0);
+      return;
+    }
 
     setDisplayTimer(gameState.timeLeft);
 
