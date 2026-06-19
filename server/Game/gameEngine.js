@@ -85,7 +85,11 @@ class GameEngine {
         correct: false,
         message: "You've already guessed correctly this round!",
       };
-    if (guess.toLowerCase() === this.currentSong.title.toLowerCase()) {
+
+    const normalisedGuess = this.normaliseText(guess);
+    const normalisedTitle = this.normaliseText(this.currentSong.title);
+
+    if (normalisedGuess === normalisedTitle) {
       this.correctGuessesThisRound.push(username);
       let points = 10;
       this.players[username].score += points;
@@ -99,6 +103,14 @@ class GameEngine {
     }
 
     return { correct: false, message: "Wrong answer!" };
+  }
+
+  normaliseText(text) {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s]/g, "")
+      .replace(/\s+/g, " ");
   }
 
   nextRound() {
