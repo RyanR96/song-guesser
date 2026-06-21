@@ -1,3 +1,11 @@
+function normaliseText(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s]/g, "")
+    .replace(/\s+/g, " ");
+}
+
 function levenshteinDistance(a, b) {
   const matrix = [];
 
@@ -30,3 +38,30 @@ console.log(levenshteinDistance("wots my age agian", "whats my age again"));
 console.log(
   levenshteinDistance("awhats amy aage aagain", "whats my age again"),
 );
+
+function isCloseMatch(guess, answer) {
+  const normalisedAnswer = normaliseText(answer);
+  const normalisedGuess = normaliseText(guess);
+
+  if (!normalisedAnswer || !normalisedGuess) return false;
+
+  if (normalisedGuess === normalisedAnswer) return true;
+
+  let distance = levenshteinDistance(normalisedGuess, normalisedAnswer);
+
+  let allowedDistance;
+
+  if (normalisedAnswer.length <= 5) {
+    allowedDistance = 1;
+  } else if (normalisedAnswer.length <= 10) {
+    allowedDistance = 2;
+  } else {
+    allowedDistance = 4;
+  }
+
+  return distance <= allowedDistance;
+}
+
+console.log(isCloseMatch("duck", "dark")); // 2
+console.log(isCloseMatch("wots my age agian", "whats my age again"));
+console.log(isCloseMatch("awhats amy aage aagain", "whats my age again"));
