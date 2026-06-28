@@ -65,3 +65,5 @@ function isCloseMatch(guess, answer) {
 console.log(isCloseMatch("duck", "dark")); // 2
 console.log(isCloseMatch("wots my age agian", "whats my age again"));
 console.log(isCloseMatch("awhats amy aage aagain", "whats my age again"));
+
+module.exports = isCloseMatch;
