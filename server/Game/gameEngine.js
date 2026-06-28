@@ -121,7 +121,7 @@ class GameEngine {
     this.roundStartTime = Date.now();
 
     if (this.timer) clearTimeout(this.timer);
-    if (this.prepTimer) clearTimeout(this.timer);
+    if (this.prepTimer) clearTimeout(this.prepTimer);
 
     this.prepTimer = setTimeout(() => {
       this.startRound();
@@ -149,7 +149,7 @@ class GameEngine {
 
   endGame() {
     if (this.timer) clearTimeout(this.timer);
-    if (this.prepTimer) clearTimeout(this.timer);
+    if (this.prepTimer) clearTimeout(this.prepTimer);
 
     this.timer = null;
     this.prepTimer = null;
