@@ -7,7 +7,9 @@ class GameEngine {
     this.currentRound = 0;
     this.totalRounds = 15;
     this.players = {};
-    this.correctGuessesThisRound = [];
+    //this.correctGuessesThisRound = [];
+    this.roundGuessProgress = {};
+    this.bothGuessesCorrect = 0;
     this.roundStartTime = null;
     this.roundDuration = 5000;
     this.timer = null;
@@ -37,7 +39,8 @@ class GameEngine {
 
     this.currentRound = 0;
     this.currentSong = null;
-    this.correctGuessesThisRound = [];
+    this.roundGuessProgress = {};
+    this.bothGuessesCorrect = 0;
     this.timer = null;
     this.prepTimer = null;
     this.prepStartTime = null;
@@ -82,30 +85,90 @@ class GameEngine {
     if (!this.players[username])
       return { correct: false, message: "Player not in game" };
 
-    if (this.correctGuessesThisRound.includes(username))
+    if (!this.roundGuessProgress[username]) {
+      this.roundGuessProgress[username] = {
+        titleCorrect: false,
+        artistCorrect: false,
+        bothCorrect: false,
+        finishedPosition: null,
+      };
+    }
+
+    const progress = this.roundGuessProgress[username];
+
+    if (progress.bothCorrect) {
       return {
         correct: false,
         message: "You've already guessed correctly this round!",
       };
-
-    if (isCloseMatch(guess, this.currentSong.title)) {
-      this.correctGuessesThisRound.push(username);
-      let points = 10;
-      this.players[username].score += points;
-      // Add points based on time they got answer right, aka change it later
-
-      return {
-        correct: true,
-        message: "Correct answer!",
-        score: this.players[username].score,
-      };
     }
 
-    return { correct: false, message: "Wrong answer!" };
+    let points = 0;
+    let message = "";
+
+    if (!progress.titleCorrect && isCloseMatch(guess, this.currentSong.title)) {
+      progress.titleCorrect = true;
+      points += 1;
+      message = "Correct title, now get the artist name";
+    } else if (!progress.artistCorrect) {
+      const artistCorrect = this.currentSong.artist.some(artist =>
+        isCloseMatch(guess, artist),
+      );
+
+      if (artistCorrect) {
+        progress.artistCorrect = true;
+        points += 1;
+        message = "Correct artist, now get the song title";
+      }
+    }
+
+    if (points === 0) {
+      return { correct: false, message: "Wrong answer!" };
+    }
+
+    if (
+      progress.titleCorrect &&
+      progress.artistCorrect &&
+      !progress.bothCorrect
+    ) {
+      progress.bothCorrect = true;
+
+      this.bothGuessesCorrect++;
+
+      progress.finishedPosition = this.bothGuessesCorrect;
+
+      points += 2;
+
+      if (progress.finishedPosition === 1) {
+        points += 2;
+        message = "Correct, you were first";
+      } else if (progress.finishedPosition === 2) {
+        points += 1;
+        message = "Correct, you were second";
+      } else {
+        message = "Correct, you got both the artist and title";
+      }
+    }
+
+    this.players[username].score += points;
+
+    return {
+      correct: true,
+      message,
+      pointsAwarded: points,
+      score: this.players[username].score,
+      progress: {
+        titleCorrect: progress.titleCorrect,
+        artistCorrect: progress.artistCorrect,
+        bothCorrect: progress.bothCorrect,
+        finishedPosition: progress.finishedPosition,
+      },
+    };
   }
 
   nextRound() {
-    this.correctGuessesThisRound = [];
+    this.roundGuessProgress = {};
+    this.bothGuessesCorrect = 0;
 
     if (!this.songs) return false;
 
