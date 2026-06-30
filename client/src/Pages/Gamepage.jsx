@@ -70,6 +70,10 @@ function Gamepage() {
     function handleGuessFeedback(data) {
       setGuessFeedback(data);
       console.log(data);
+      if (data.progress.bothCorrectTime) {
+        console.log("Got it correct in :");
+        console.log((data.progress.bothCorrectTime / 1000).toFixed(1));
+      }
     }
 
     function handleLobbyState(data) {

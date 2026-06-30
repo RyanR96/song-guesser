@@ -90,6 +90,7 @@ class GameEngine {
         titleCorrect: false,
         artistCorrect: false,
         bothCorrect: false,
+        bothCorrectTime: null,
         finishedPosition: null,
       };
     }
@@ -132,13 +133,15 @@ class GameEngine {
       !progress.bothCorrect
     ) {
       progress.bothCorrect = true;
-
+      progress.bothCorrectTime = this.roundStartTime
+        ? Date.now() - this.roundStartTime
+        : 0;
       this.bothGuessesCorrect++;
 
       progress.finishedPosition = this.bothGuessesCorrect;
 
       points += 2;
-
+      // bonus points for those that finished 1st/2nd. Add bonus points later for those that guess quickly
       if (progress.finishedPosition === 1) {
         points += 2;
         message = "Correct, you were first";
@@ -161,6 +164,7 @@ class GameEngine {
         titleCorrect: progress.titleCorrect,
         artistCorrect: progress.artistCorrect,
         bothCorrect: progress.bothCorrect,
+        bothCorrectTime: progress.bothCorrectTime,
         finishedPosition: progress.finishedPosition,
       },
     };
