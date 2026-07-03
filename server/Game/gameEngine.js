@@ -14,6 +14,7 @@ class GameEngine {
     this.roundDuration = 5000;
     this.timer = null;
     this.songs = [];
+    this.revealedSongs = [];
     this.onStateChange = null;
     this.onGameOver = null;
     // Prep phase (Time inbetween songs playing)
@@ -41,6 +42,7 @@ class GameEngine {
     this.currentSong = null;
     this.roundGuessProgress = {};
     this.bothGuessesCorrect = 0;
+    this.revealedSongs = [];
     this.timer = null;
     this.prepTimer = null;
     this.prepStartTime = null;
@@ -208,10 +210,24 @@ class GameEngine {
     this.roundPhase = "playing";
 
     this.timer = setTimeout(() => {
-      this.nextRound();
+      this.finishRound();
     }, this.roundDuration);
 
     if (this.onStateChange) this.onStateChange(this.getState());
+  }
+
+  finishRound() {
+    if (!this.isPlaying || !this.currentSong) return false;
+
+    this.revealedSongs.push({
+      round: this.currentRound,
+      title: this.currentSong.title,
+      artist: this.currentSong.artist,
+      artworkUrl: this.currentSong.artworkUrl,
+      trackviewUrl: this.currentSong.trackviewUrl,
+    });
+
+    this.nextRound();
   }
 
   endGame() {
@@ -263,6 +279,7 @@ class GameEngine {
         round: this.currentRound,
         roundPhase: this.roundPhase,
         leaderboard: this.getLeaderboard(),
+        revealedSongs: this.revealedSongs,
       };
     }
     let timeLeft = 0;
@@ -287,6 +304,7 @@ class GameEngine {
       playersCount: Object.keys(this.players).length,
       leaderboard: this.getLeaderboard(),
       previewUrl: this.currentSong.previewUrl,
+      revealedSongs: this.revealedSongs,
     };
   }
 }
