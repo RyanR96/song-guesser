@@ -270,6 +270,26 @@ function Gamepage() {
           ))}
         </ul>
       )}
+      <ul>
+        {gameState?.revealedSongs?.map(song => (
+          <li key={song.round}>
+            {song.artworkUrl && <img src={song.artworkUrl} />}
+            {song.trackViewUrl ? (
+              <a
+                href={song.trackViewUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium underline underline-offset-2 hover:opacity-75"
+              >
+                {song.title}
+              </a>
+            ) : (
+              <span>{song.title}</span>
+            )}
+            <span> {song.artist.join(", ")} </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
