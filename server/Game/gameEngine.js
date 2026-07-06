@@ -81,6 +81,7 @@ class GameEngine {
     return { success: true };
   }
 
+  // Returns private feedback for the player that submitted the guess
   submitGuess(username, guess) {
     if (!this.isPlaying)
       return { correct: false, message: "Game not underway" };
@@ -224,7 +225,7 @@ class GameEngine {
       title: this.currentSong.title,
       artist: this.currentSong.artist,
       artworkUrl: this.currentSong.artworkUrl,
-      trackviewUrl: this.currentSong.trackviewUrl,
+      trackViewUrl: this.currentSong.trackViewUrl,
     });
 
     this.nextRound();
@@ -266,10 +267,19 @@ class GameEngine {
     return this.currentRound;
   }
 
+  //Public leaderboard state, sent to all players
   getLeaderboard() {
     return Object.entries(this.players)
       .sort((a, b) => b[1].score - a[1].score)
-      .map(([username, data]) => ({ username, score: data.score }));
+      .map(([username, data]) => {
+        const progress = this.roundGuessProgress[username];
+
+        return {
+          username,
+          score: data.score,
+          bothCorrectTime: progress?.bothCorrectTime ?? null,
+        };
+      });
   }
 
   getState() {

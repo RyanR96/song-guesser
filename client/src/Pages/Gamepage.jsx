@@ -72,7 +72,7 @@ function Gamepage() {
       console.log(data);
       if (data.progress.bothCorrectTime) {
         console.log("Got it correct in :");
-        console.log((data.progress.bothCorrectTime / 1000).toFixed(1));
+        console.log((data.progress?.bothCorrectTime / 1000).toFixed(1));
       }
     }
 
@@ -256,6 +256,13 @@ function Gamepage() {
         {gameState?.leaderboard?.map((player, index) => (
           <li key={player.username}>
             {index + 1}. {player.username} : {player.score}
+            {typeof player.bothCorrectTime === "number" && (
+              <span>
+                {" "}
+                You got the answer correct in :{" "}
+                {(player.bothCorrectTime / 1000).toFixed(1)}s
+              </span>
+            )}
           </li>
         ))}
       </ul>
@@ -265,7 +272,7 @@ function Gamepage() {
           <p>Game Over!</p>
           {gameOverData.leaderboard.map((player, index) => (
             <li key={player.username}>
-              {index + 1}. {player.username} : {player.score}
+              {index + 1}. {player.username} : {player.score}{" "}
             </li>
           ))}
         </ul>
