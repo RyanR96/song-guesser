@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import JoinModal from "../Components/JoinModal";
+import CreateAccountModal from "../Components/CreateAccountModal";
 
 function Homepage() {
   const [isJoinOpen, setIsJoinOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   function handlePlayClick() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      handleJoinSuccess();
+    }
+
     setIsJoinOpen(true);
   }
 
@@ -34,6 +41,17 @@ function Homepage() {
           onJoinSuccess={handleJoinSuccess}
         />
       )}
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
+      >
+        Create Account
+      </button>
+      <CreateAccountModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAuthSuccess={handleJoinSuccess}
+      />
     </div>
   );
 }
