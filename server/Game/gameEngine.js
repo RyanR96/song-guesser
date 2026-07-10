@@ -15,8 +15,10 @@ class GameEngine {
     this.timer = null;
     this.songs = [];
     this.revealedSongs = [];
+    // hooks
     this.onStateChange = null;
     this.onGameOver = null;
+    this.onPlayerScored = null;
     // Prep phase (Time inbetween songs playing)
     this.roundPrepDuration = 3000;
     this.prepTimer = null;
@@ -157,6 +159,14 @@ class GameEngine {
     }
 
     this.players[username].score += points;
+
+    if (this.onPlayerScored) {
+      this.onPlayerScored({
+        username,
+        player: this.players[username],
+        points,
+      });
+    }
 
     return {
       correct: true,

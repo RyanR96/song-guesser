@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const prisma = require("./prismaClient");
@@ -9,8 +11,6 @@ const jwt = require("jsonwebtoken");
 const http = require("http");
 const { Server } = require("socket.io");
 const game = require("./Game/gameEngine");
-
-require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
@@ -92,6 +92,7 @@ io.on("connection", socket => {
     console.log("join request, username:", username);
 
     try {
+      // if registered user
       if (socket.data.user) {
         const claimedUsername = socket.data.user.username;
         console.log("socket user:", socket.data.user);
@@ -112,6 +113,7 @@ io.on("connection", socket => {
         return;
       }
 
+      // if guest player
       const existingUser = await prisma.user.findUnique({
         where: { username },
       });
@@ -172,11 +174,13 @@ game.onStateChange = state => {
 
 game.onGameOver = async ({ leaderboard, players }) => {
   try {
-    for (const username in players) {
+    /**
+     *     for (const username in players) {
       const player = players[username];
 
       if (!player.isRegistered) continue;
 
+    
       await prisma.user.update({
         where: { id: player.userId },
         data: {
@@ -184,6 +188,7 @@ game.onGameOver = async ({ leaderboard, players }) => {
         },
       });
     }
+     */
 
     const winner = leaderboard[0];
 
@@ -208,7 +213,24 @@ game.onGameOver = async ({ leaderboard, players }) => {
     io.emit("gameOver", { leaderboard });
     startLobbyCountdown();
   } catch (err) {
-    console.error("Failed to save end game data");
+    console.error("Failed to save end game data", err);
+  }
+};
+
+// Update users totalPoints
+
+game.onPlayerScored = async ({ player, points }) => {
+  try {
+    if (!player.isRegistered) return;
+
+    await prisma.user.update({
+      where: { id: player.userId },
+      data: {
+        totalPoints: { increment: points },
+      },
+    });
+  } catch (err) {
+    console.error("Failed to save player points", err);
   }
 };
 
