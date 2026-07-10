@@ -234,6 +234,34 @@ game.onPlayerScored = async ({ player, points }) => {
   }
 };
 
+game.onPlayerCompletedRound = async ({ player, bothCorrectTime }) => {
+  console.log("Attempting to update playercompletedround stats");
+  try {
+    if (!player.isRegistered) return;
+
+    const user = await prisma.user.findUnique({
+      where: { id: player.userId },
+      select: { bestGuessTime: true },
+    });
+
+    const updateData = {
+      totalGuessTime: { increment: bothCorrectTime },
+      totalGuesses: { increment: 1 },
+    };
+
+    if (user.bestGuessTime === null || bothCorrectTime < user.bestGuessTime) {
+      updateData.bestGuessTime = bothCorrectTime;
+    }
+
+    await prisma.user.update({
+      where: { id: player.userId },
+      data: updateData,
+    });
+  } catch (err) {
+    console.error("Failed to save completed round stats", err);
+  }
+};
+
 const PORT = 3000;
 //server.listen or app.listen?
 server.listen(PORT, () => {

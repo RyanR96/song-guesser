@@ -19,6 +19,7 @@ class GameEngine {
     this.onStateChange = null;
     this.onGameOver = null;
     this.onPlayerScored = null;
+    this.onPlayerCompletedRound = null;
     // Prep phase (Time inbetween songs playing)
     this.roundPrepDuration = 3000;
     this.prepTimer = null;
@@ -138,11 +139,21 @@ class GameEngine {
       !progress.bothCorrect
     ) {
       progress.bothCorrect = true;
+      // stored as milliseconds
       progress.bothCorrectTime = this.roundStartTime
         ? Date.now() - this.roundStartTime
         : 0;
-      this.bothGuessesCorrect++;
 
+      // send details to update player stats after correct guess
+      if (this.onPlayerCompletedRound) {
+        this.onPlayerCompletedRound({
+          username,
+          player: this.players[username],
+          bothCorrectTime: progress.bothCorrectTime,
+        });
+      }
+
+      this.bothGuessesCorrect++;
       progress.finishedPosition = this.bothGuessesCorrect;
 
       points += 2;
@@ -160,6 +171,7 @@ class GameEngine {
 
     this.players[username].score += points;
 
+    // send player details and points earned - for updating DB
     if (this.onPlayerScored) {
       this.onPlayerScored({
         username,
