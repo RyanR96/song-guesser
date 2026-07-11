@@ -6,6 +6,7 @@ const prisma = require("./prismaClient");
 const app = express();
 const gameRoutes = require("./routes/game.routes");
 const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes");
 const jwt = require("jsonwebtoken");
 
 const http = require("http");
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/game", gameRoutes);
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 
 const server = http.createServer(app);
 
