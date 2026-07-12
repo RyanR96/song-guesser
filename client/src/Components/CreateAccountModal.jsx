@@ -44,10 +44,7 @@ function CreateAccountModal(props) {
         return;
       }
 
-      localStorage.removeItem("guestUsername");
-      localStorage.setItem("token", data.token);
-
-      onAuthSuccess();
+      onAuthSuccess?.(data.token);
 
       onClose();
       setUsername("");

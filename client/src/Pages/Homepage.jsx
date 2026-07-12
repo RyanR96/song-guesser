@@ -7,14 +7,24 @@ function Homepage() {
   const [isJoinOpen, setIsJoinOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [currentUser, setCurrentUser] = useState(null);
 
   function handlePlayClick() {
-    const token = localStorage.getItem("token");
     if (token) {
       handleJoinSuccess();
     }
 
     setIsJoinOpen(true);
+  }
+
+  function handleAuthSuccess(newToken) {
+    localStorage.setItem("token", newToken);
+    localStorage.removeItem("guestUsername");
+    setToken(newToken);
+    setIsModalOpen(false);
+
+    navigate("/game");
   }
 
   function handleJoinSuccess() {
@@ -50,7 +60,7 @@ function Homepage() {
       <CreateAccountModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAuthSuccess={handleJoinSuccess}
+        onAuthSuccess={handleAuthSuccess}
       />
     </div>
   );
