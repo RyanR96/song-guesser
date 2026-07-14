@@ -50,7 +50,7 @@ function Profile() {
   return (
     <div>
       <h1>Profile</h1>
-      <UserStatsCard />
+      <UserStatsCard stats={stats} />
     </div>
   );
 }
