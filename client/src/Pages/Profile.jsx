@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import UserStatsCard from "../Components/UserStatsCard";
+import NotFound from "./NotFound";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -10,18 +11,25 @@ function Profile() {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     async function fetchStats() {
       try {
         setLoading(true);
         setError("");
+        setNotFound(false);
 
         const res = await fetch(
           `${API_URL}/users/${encodeURIComponent(username)}/stats`,
         );
 
         const data = await res.json();
+
+        if (res.status === 404) {
+          setNotFound(true);
+          return;
+        }
 
         if (!res.ok) {
           setError(data.message || "Failed to fetch user stats");
@@ -42,6 +50,10 @@ function Profile() {
   }, [API_URL, username]);
 
   if (loading) return <p>Loading profile...</p>;
+
+  if (notFound) {
+    return <NotFound message="User profile not found" />;
+  }
 
   if (error) return <p>{error}</p>;
 
