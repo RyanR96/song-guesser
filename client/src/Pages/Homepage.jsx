@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import JoinModal from "../Components/JoinModal";
 import CreateAccountModal from "../Components/CreateAccountModal";
+import LoginModal from "../Components/LoginModal";
 
 function Homepage() {
   const API_URL = "http://localhost:3000";
   const [isJoinOpen, setIsJoinOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const navigate = useNavigate();
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [currentUser, setCurrentUser] = useState(null);
@@ -56,7 +58,7 @@ function Homepage() {
     localStorage.setItem("token", newToken);
     localStorage.removeItem("guestUsername");
     setToken(newToken);
-    setIsModalOpen(false);
+    setIsCreateAccountOpen(false);
 
     navigate("/game");
   }
@@ -96,6 +98,15 @@ function Homepage() {
         </button>
       )}
 
+      {!currentUser && (
+        <button
+          onClick={() => setIsLoginOpen(true)}
+          className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
+        >
+          Login
+        </button>
+      )}
+
       <p className="text-center">Join the lobby</p>
       <button
         className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
@@ -110,14 +121,19 @@ function Homepage() {
         />
       )}
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => setIsCreateAccountOpen(true)}
         className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
       >
         Create Account
       </button>
       <CreateAccountModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isCreateAccountOpen}
+        onClose={() => setIsCreateAccountOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
         onAuthSuccess={handleAuthSuccess}
       />
     </div>
