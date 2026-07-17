@@ -4,49 +4,16 @@ import JoinModal from "../Components/JoinModal";
 import CreateAccountModal from "../Components/CreateAccountModal";
 import LoginModal from "../Components/LoginModal";
 
-function Homepage() {
+function Homepage(props) {
+  const { currentUser, onAuthSuccess, onLogout } = props;
   const API_URL = "http://localhost:3000";
   const [isJoinOpen, setIsJoinOpen] = useState(false);
   const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const navigate = useNavigate();
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    async function fetchCurrentUser() {
-      if (!token) {
-        setCurrentUser(null);
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_URL}/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          localStorage.removeItem("token");
-          setToken(null);
-          setCurrentUser(null);
-          return;
-        }
-
-        setCurrentUser(data);
-      } catch (err) {
-        console.error("Failed to fetch current user", err);
-      }
-    }
-
-    fetchCurrentUser();
-  }, [API_URL, token]);
 
   function handlePlayClick() {
-    if (token) {
+    if (localStorage.getItem("token")) {
       handleJoinSuccess();
       return;
     }
@@ -54,11 +21,11 @@ function Homepage() {
     setIsJoinOpen(true);
   }
 
-  function handleAuthSuccess(newToken) {
-    localStorage.setItem("token", newToken);
-    localStorage.removeItem("guestUsername");
-    setToken(newToken);
+  function handleHomepageAuthSuccess(newToken) {
+    onAuthSuccess(newToken);
+
     setIsCreateAccountOpen(false);
+    setIsLoginOpen(false);
 
     navigate("/game");
   }
@@ -66,12 +33,6 @@ function Homepage() {
   function handleJoinSuccess() {
     setIsJoinOpen(false);
     navigate("/game");
-  }
-
-  function handleLogout() {
-    localStorage.removeItem("token");
-    setToken(null);
-    setCurrentUser(null);
   }
 
   return (
@@ -91,7 +52,7 @@ function Homepage() {
 
       {currentUser && (
         <button
-          onClick={handleLogout}
+          onClick={onLogout}
           className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
         >
           Logout
@@ -129,12 +90,12 @@ function Homepage() {
       <CreateAccountModal
         isOpen={isCreateAccountOpen}
         onClose={() => setIsCreateAccountOpen(false)}
-        onAuthSuccess={handleAuthSuccess}
+        onAuthSuccess={handleHomepageAuthSuccess}
       />
       <LoginModal
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
-        onAuthSuccess={handleAuthSuccess}
+        onAuthSuccess={handleHomepageAuthSuccess}
       />
     </div>
   );
