@@ -4,6 +4,7 @@ import Homepage from "./Pages/Homepage";
 import Gamepage from "./Pages/Gamepage";
 import Profile from "./Pages/Profile";
 import NotFound from "./Pages/NotFound";
+import Layout from "./Components/Layout";
 
 function App() {
   const API_URL = "http://localhost:3000";
@@ -57,18 +58,28 @@ function App() {
   return (
     <Routes>
       <Route
-        path="/"
         element={
-          <Homepage
+          <Layout
             currentUser={currentUser}
             onAuthSuccess={handleAuthSuccess}
             onLogout={handleLogout}
           />
         }
-      />
-      <Route path="/game" element={<Gamepage />} />
-      <Route path="/profile/:username" element={<Profile />} />
-      <Route path="*" element={<NotFound message="Page not found" />} />
+      >
+        <Route
+          path="/"
+          element={
+            <Homepage
+              currentUser={currentUser}
+              onAuthSuccess={handleAuthSuccess}
+              onLogout={handleLogout}
+            />
+          }
+        />
+        <Route path="/game" element={<Gamepage />} />
+        <Route path="/profile/:username" element={<Profile />} />
+        <Route path="*" element={<NotFound message="Page not found" />} />
+      </Route>
     </Routes>
   );
 }
