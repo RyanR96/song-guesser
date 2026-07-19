@@ -1,11 +1,33 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import CreateAccountModal from "./CreateAccountModal";
+import LoginModal from "./LoginModal";
 
 function Navbar(props) {
   const { currentUser, onAuthSuccess, onLogout } = props;
+  const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isGamePage = location.pathname === "/game";
+
+  function handleNavbarAuthSuccess(newToken) {
+    onAuthSuccess(newToken);
+
+    setIsCreateAccountOpen(false);
+    setIsLoginOpen(false);
+
+    if (isGamePage) {
+      window.location.reload();
+    }
+  }
+
+  function handleNavbarLogout() {
+    onLogout();
+    navigate("/");
+  }
   return (
     <nav className="flex items-center justify-between p-4 border-b border-black">
       <div>
@@ -26,8 +48,29 @@ function Navbar(props) {
               My profile
             </Link>
           )}
+
+          {currentUser && <button onClick={handleNavbarLogout}>Logout</button>}
+
+          {!currentUser && (
+            <>
+              <button onClick={() => setIsLoginOpen(true)}>Login</button>
+              <button onClick={() => setIsCreateAccountOpen(true)}>
+                Create Account
+              </button>
+            </>
+          )}
         </div>
       </div>
+      <CreateAccountModal
+        isOpen={isCreateAccountOpen}
+        onClose={() => setIsCreateAccountOpen(false)}
+        onAuthSuccess={handleNavbarAuthSuccess}
+      />
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onAuthSuccess={handleNavbarAuthSuccess}
+      />
     </nav>
   );
 }
