@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import JoinModal from "../Components/JoinModal";
 import CreateAccountModal from "../Components/CreateAccountModal";
 import LoginModal from "../Components/LoginModal";
@@ -11,6 +11,23 @@ function Homepage(props) {
   const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [loginError, setLoginError] = useState("");
+
+  useEffect(() => {
+    if (location.state?.openLogin) {
+      setIsLoginOpen(true);
+    }
+
+    if (location.state?.loginError) {
+      setLoginError(location.state.loginError);
+    }
+
+    navigate(location.pathname, {
+      replace: true,
+      state: null,
+    });
+  }, [location.state, location.pathname, navigate]);
 
   function handlePlayClick() {
     if (localStorage.getItem("token")) {
@@ -94,8 +111,12 @@ function Homepage(props) {
       />
       <LoginModal
         isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
+        onClose={() => {
+          setIsLoginOpen(false);
+          setLoginError("");
+        }}
         onAuthSuccess={handleHomepageAuthSuccess}
+        externalError={loginError}
       />
     </div>
   );

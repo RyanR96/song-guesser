@@ -4,7 +4,7 @@ import { motion, AnimatePresence, easeInOut } from "framer-motion";
 
 function LoginModal(props) {
   const API_URL = "http://localhost:3000";
-  const { isOpen, onClose, onAuthSuccess } = props;
+  const { isOpen, onClose, onAuthSuccess, externalError } = props;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -136,6 +136,7 @@ function LoginModal(props) {
                   transition={{ duration: 0.4, ease: easeInOut }}
                 >
                   {errors.api || ""}
+                  <p>{externalError || ""}</p>
                 </motion.p>
               </div>
 

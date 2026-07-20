@@ -53,7 +53,7 @@ function Gamepage() {
 
       navigate("/", {
         state: {
-          pageError: message,
+          loginError: message,
           openLogin: err.message === "Invalid token",
         },
       });
