@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { socket } from "../socket";
+import { useNavigate } from "react-router-dom";
 
 function Gamepage() {
   const [error, setError] = useState("");
@@ -12,6 +13,7 @@ function Gamepage() {
   const [nextGameTimer, setNextGameTimer] = useState(0);
   const [nextSongTimer, setNextSongTimer] = useState(0);
   const audioRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,10 +31,6 @@ function Gamepage() {
       socket.auth = {};
     }
 
-    if (!socket.connected) {
-      socket.connect();
-    }
-
     function handleConnect() {
       // need to add token join
       if (guestUsername) {
@@ -42,6 +40,26 @@ function Gamepage() {
       }
     }
 
+    // err for logged users
+    function handleConnectError(err) {
+      console.log(err.message);
+      const message =
+        err.message === "Invalid token"
+          ? "Your session expired. Please login again"
+          : "Could not connect to game";
+
+      localStorage.removeItem("token");
+      socket.disconnect();
+
+      navigate("/", {
+        state: {
+          pageError: message,
+          openLogin: err.message === "Invalid token",
+        },
+      });
+    }
+
+    //err for guests
     function handleJoinResult(data) {
       if (!data.success) {
         setError(data.error);
@@ -82,11 +100,16 @@ function Gamepage() {
     }
 
     socket.on("connect", handleConnect);
+    socket.on("connect_error", handleConnectError);
     socket.on("joinResult", handleJoinResult);
     socket.on("state", getState);
     socket.on("guessResult", handleGuessFeedback);
     socket.on("gameOver", handleGameOver);
     socket.on("lobbyState", handleLobbyState);
+
+    if (!socket.connected) {
+      socket.connect();
+    }
 
     return () => {
       socket.off("connect", handleConnect);
