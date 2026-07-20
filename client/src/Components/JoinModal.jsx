@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 function joinModal(props) {
-  const { onClose, onJoinSuccess } = props;
+  const { onClose, onJoinSuccess, externalError } = props;
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
 
@@ -9,13 +9,15 @@ function joinModal(props) {
     e.preventDefault();
     console.log("Submitted");
 
-    if (!username.trim()) {
+    const trimmedUsername = username.trim();
+
+    if (!trimmedUsername) {
       setError("Please enter a username");
       return;
     }
 
-    console.log("You are:", username.trim());
-    localStorage.setItem("guestUsername", username);
+    console.log("You are:", trimmedUsername);
+    localStorage.setItem("guestUsername", trimmedUsername);
     onJoinSuccess();
   }
 
