@@ -136,7 +136,7 @@ function LoginModal(props) {
                   transition={{ duration: 0.4, ease: easeInOut }}
                 >
                   {errors.api || ""}
-                  <p>{externalError || ""}</p>
+                  <span>{externalError || ""}</span>
                 </motion.p>
               </div>
 

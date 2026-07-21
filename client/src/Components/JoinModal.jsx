@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function joinModal(props) {
   const { onClose, onJoinSuccess, externalError } = props;
@@ -36,7 +36,7 @@ function joinModal(props) {
           Join as guest
         </button>
       </form>
-      {error ?? <p>{error}</p>}
+      {externalError && <p className="text-red-500">{externalError}</p>}
     </div>
   );
 }

@@ -13,6 +13,7 @@ function Homepage(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const [loginError, setLoginError] = useState("");
+  const [joinError, setJoinError] = useState("");
 
   useEffect(() => {
     if (location.state?.openLogin) {
@@ -21,6 +22,15 @@ function Homepage(props) {
 
     if (location.state?.loginError) {
       setLoginError(location.state.loginError);
+      onLogout();
+    }
+
+    if (location.state?.openJoin) {
+      setIsJoinOpen(true);
+    }
+
+    if (location.state?.joinError) {
+      setJoinError(location.state.joinError);
     }
 
     navigate(location.pathname, {
@@ -94,8 +104,12 @@ function Homepage(props) {
       </button>
       {isJoinOpen && (
         <JoinModal
-          onClose={() => setIsJoinOpen(false)}
+          onClose={() => {
+            setIsJoinOpen(false);
+            setJoinError("");
+          }}
           onJoinSuccess={handleJoinSuccess}
+          externalError={joinError}
         />
       )}
       <button

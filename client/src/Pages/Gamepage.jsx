@@ -61,13 +61,27 @@ function Gamepage() {
 
     //err for guests
     function handleJoinResult(data) {
+      console.log(data.error);
       if (!data.success) {
-        setError(data.error);
-        if (data.error === "Username already exists") {
+        const message = data.error || "Could not join game";
+
+        if (
+          data.error === "Username already exists" ||
+          data.error === "Username already in the game"
+        ) {
           localStorage.removeItem("guestUsername");
-          alert("Placeholder, send user back");
         }
+        socket.disconnect();
+        navigate("/", {
+          state: {
+            joinError: message,
+            openJoin: true,
+          },
+        });
+
+        return;
       }
+      setError("");
     }
 
     function getState(data) {
