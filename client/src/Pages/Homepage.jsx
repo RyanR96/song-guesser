@@ -102,16 +102,17 @@ function Homepage(props) {
       >
         Play game
       </button>
-      {isJoinOpen && (
-        <JoinModal
-          onClose={() => {
-            setIsJoinOpen(false);
-            setJoinError("");
-          }}
-          onJoinSuccess={handleJoinSuccess}
-          externalError={joinError}
-        />
-      )}
+
+      <JoinModal
+        isOpen={isJoinOpen}
+        onClose={() => {
+          setIsJoinOpen(false);
+          setJoinError("");
+        }}
+        onJoinSuccess={handleJoinSuccess}
+        externalError={joinError}
+      />
+
       <button
         onClick={() => setIsCreateAccountOpen(true)}
         className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
