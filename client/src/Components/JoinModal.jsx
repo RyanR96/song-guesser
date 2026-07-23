@@ -32,14 +32,14 @@ function joinModal(props) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 flex items-center overflow-y-auto justify-center z-50"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
         >
           <motion.div
-            className="relative bg-white p-6 rounded-2xl shadow-lg h-[50%] p-10"
+            className="relative w-full max-w-md max-h-[calc(100dvh-3rem)] overflow-y-auto bg-white p-6 rounded-2xl shadow-lg p-10"
             initial={{ y: 50 }}
             animate={{ y: 0 }}
             exit={{ y: 50 }}
@@ -94,6 +94,20 @@ function joinModal(props) {
                 Join as guest
               </button>
             </form>
+            <div className="my-6 flex items-center gap-4">
+              <div className="h-px flex-1 bg-slate-200" />
+              <span className="text-sm text-slate-400">or</span>
+              <div className="h-px flex-1 bg-slate-200" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button className="rounded-xl border border-purple-200 px-4 py-3 font-semibold text-purple-700 transition hover:bg-purple-50">
+                Log in
+              </button>
+              <button className="rounded-xl border border-purple-200 px-4 py-3 font-semibold text-purple-700 transition hover:bg-purple-50">
+                Create Account
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       )}
