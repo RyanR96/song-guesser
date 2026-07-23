@@ -52,20 +52,48 @@ function joinModal(props) {
             >
               X
             </button>
+
+            <div className="mb-6 text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-purple-100 text-2xl">
+                ♫
+              </div>
+
+              <h2 className="text-2xl font-bold text-slate-900">
+                Join the Game
+              </h2>
+              <p className="mt-2 text-sm text-slate-500">
+                Enter a guest username to play
+              </p>
+            </div>
             <form onSubmit={handleSubmit}>
               <input
-                className="border-2 border-black"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-transparent focus:ring-2 focus:ring-purple-400"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
+                placeholder="Enter username..."
               />
+              <motion.p
+                className="mt-2 min-h-5 text-sm font-semibold text-red-500"
+                key={externalError}
+                initial={{ opacity: 0 }}
+                animate={
+                  externalError
+                    ? { opacity: 1, x: [0, -6, 6, -4, 4, 0] }
+                    : { opacity: 0 }
+                }
+                transition={{ duration: 0.35, ease: easeInOut }}
+              >
+                {externalError || ""}{" "}
+                {/** Add regular errors to this later, will probably need combining into a new state */}
+              </motion.p>
+
               <button
-                className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
+                className="mt-3 w-full rounded-xl bg-purple-600 px-6 py-3 font-semibold text-white shadow-lg shadow-purple-200 transition hover:bg-purple-500"
                 type="submit"
               >
                 Join as guest
               </button>
             </form>
-            {externalError && <p className="text-red-500">{externalError}</p>}
           </motion.div>
         </motion.div>
       )}
