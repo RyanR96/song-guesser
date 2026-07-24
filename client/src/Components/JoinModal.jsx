@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion, easeInOut } from "framer-motion";
 
 function joinModal(props) {
-  const { onClose, onJoinSuccess, externalError, isOpen } = props;
+  const {
+    onClose,
+    onJoinSuccess,
+    externalError,
+    isOpen,
+    onLoginClick,
+    onCreateAccountClick,
+  } = props;
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
 
@@ -101,10 +108,16 @@ function joinModal(props) {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <button className="rounded-xl border border-purple-200 px-4 py-3 font-semibold text-purple-700 transition hover:bg-purple-50">
+              <button
+                className="rounded-xl border border-purple-200 px-4 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
+                onClick={onLoginClick}
+              >
                 Log in
               </button>
-              <button className="rounded-xl border border-purple-200 px-4 py-3 font-semibold text-purple-700 transition hover:bg-purple-50">
+              <button
+                className="rounded-xl border border-purple-200 px-4 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
+                onClick={onCreateAccountClick}
+              >
                 Create Account
               </button>
             </div>

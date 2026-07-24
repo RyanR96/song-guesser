@@ -109,6 +109,14 @@ function Homepage(props) {
           setIsJoinOpen(false);
           setJoinError("");
         }}
+        onLoginClick={() => {
+          setIsJoinOpen(false);
+          setIsLoginOpen(true);
+        }}
+        onCreateAccountClick={() => {
+          setIsJoinOpen(false);
+          setIsCreateAccountOpen(true);
+        }}
         onJoinSuccess={handleJoinSuccess}
         externalError={joinError}
       />
