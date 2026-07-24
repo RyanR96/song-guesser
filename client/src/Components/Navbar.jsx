@@ -70,6 +70,10 @@ function Navbar(props) {
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         onAuthSuccess={handleNavbarAuthSuccess}
+        onCreateAccountClick={() => {
+          setIsLoginOpen(false);
+          setIsCreateAccountOpen(true);
+        }}
       />
     </nav>
   );

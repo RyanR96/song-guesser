@@ -138,6 +138,10 @@ function Homepage(props) {
           setIsLoginOpen(false);
           setLoginError("");
         }}
+        onCreateAccountClick={() => {
+          setIsLoginOpen(false);
+          setIsCreateAccountOpen(true);
+        }}
         onAuthSuccess={handleHomepageAuthSuccess}
         externalError={loginError}
       />
