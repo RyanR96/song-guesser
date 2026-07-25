@@ -65,6 +65,10 @@ function Navbar(props) {
         isOpen={isCreateAccountOpen}
         onClose={() => setIsCreateAccountOpen(false)}
         onAuthSuccess={handleNavbarAuthSuccess}
+        onLoginClick={() => {
+          setIsLoginOpen(true);
+          setIsCreateAccountOpen(false);
+        }}
       />
       <LoginModal
         isOpen={isLoginOpen}

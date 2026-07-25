@@ -131,6 +131,10 @@ function Homepage(props) {
         isOpen={isCreateAccountOpen}
         onClose={() => setIsCreateAccountOpen(false)}
         onAuthSuccess={handleHomepageAuthSuccess}
+        onLoginClick={() => {
+          setIsLoginOpen(true);
+          setIsCreateAccountOpen(false);
+        }}
       />
       <LoginModal
         isOpen={isLoginOpen}

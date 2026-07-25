@@ -4,7 +4,7 @@ import { motion, AnimatePresence, easeInOut } from "framer-motion";
 
 function CreateAccountModal(props) {
   const API_URL = "http://localhost:3000";
-  const { isOpen, onClose, onAuthSuccess } = props;
+  const { isOpen, onClose, onAuthSuccess, onLoginClick } = props;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -62,14 +62,14 @@ function CreateAccountModal(props) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 py-6 overflow-y-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
         >
           <motion.div
-            className="relative bg-white p-6 rounded-2xl shadow-lg h-[50%] p-10"
+            className="relative w-full max-w-md max-h-[calc(100dvh-3rem)] overflow-y-auto bg-white p-6 rounded-3xl shadow-lg px-8 py-8"
             initial={{ y: 50 }}
             animate={{ y: 0 }}
             exit={{ y: 50 }}
@@ -83,24 +83,26 @@ function CreateAccountModal(props) {
                 setUsername("");
                 setErrors({});
               }}
-              className="absolute top-0 right-0 mt-2 mr-2 text-lg text-gray-500 hover:text-gray-800 "
+              className="absolute right-5 top-4 text-xl text-slate-400 hover:text-slate-700"
             >
               X
             </button>
-            <h2 className="text-xl font-semibold mb-4 text-center">
-              {" "}
-              Create Account:
-            </h2>
-            <form
-              className="flex flex-col justify-evenly h-full"
-              onSubmit={handleSubmit}
-            >
+
+            <div className="mb-6 text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-purple-100 text-2xl">
+                👤➕
+              </div>
+              <h2 className="text-2xl font-bold text-slate-900">
+                Create Account:
+              </h2>
+            </div>
+            <form className="space-y-3" onSubmit={handleSubmit}>
               <div className="">
                 <input
                   value={username}
                   onChange={e => setUsername(e.target.value)}
                   placeholder="Username"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent focus:ring-green-500"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-transparent focus:ring-2 focus:ring-purple-300"
                 ></input>
 
                 <motion.p
@@ -121,7 +123,7 @@ function CreateAccountModal(props) {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="Password"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent focus:ring-green-500"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-transparent focus:ring-2 focus:ring-purple-300"
                 ></input>
                 <motion.p
                   className="text-red-500 text-sm mt-1 h-2 font-semibold"
@@ -141,7 +143,7 @@ function CreateAccountModal(props) {
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   placeholder="Confirm Password"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent focus:ring-green-500"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-transparent focus:ring-2 focus:ring-purple-300"
                 ></input>
                 <motion.p
                   className="text-red-500 text-sm mt-1 h-2 font-semibold"
@@ -155,12 +157,21 @@ function CreateAccountModal(props) {
                 </motion.p>
               </div>
               <button
-                className="bg-green-500 text-black px-6 py-1 rounded-full font-semibold hover:bg-green-300 w-full"
+                className="mt-3 w-full rounded-xl bg-purple-600 px-6 py-3 font-semibold text-white shadow-lg shadow-purple-200 transition hover:bg-purple-500"
                 type="submit"
               >
                 Sign up
               </button>
             </form>
+            <p className="mt-6 text-center text-sm text-slate-500 ">
+              Already have an account?{" "}
+              <button
+                className="font-semibold text-purple-700 hover:text-purple-500 ml-1"
+                onClick={onLoginClick}
+              >
+                Log in
+              </button>
+            </p>
           </motion.div>
         </motion.div>
       )}
