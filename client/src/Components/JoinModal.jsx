@@ -74,7 +74,7 @@ function joinModal(props) {
             </div>
             <form onSubmit={handleSubmit}>
               <input
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-transparent focus:ring-2 focus:ring-purple-400"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-transparent focus:ring-2 focus:ring-purple-300"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 placeholder="Enter username..."

@@ -2,11 +2,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import CreateAccountModal from "./CreateAccountModal";
 import LoginModal from "./LoginModal";
+import JoinModal from "./JoinModal";
 
 function Navbar(props) {
   const { currentUser, onAuthSuccess, onLogout } = props;
   const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isJoinOpen, setIsJoinOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,6 +39,20 @@ function Navbar(props) {
     onLogout();
     navigate("/");
   }
+
+  function handlePlayClick() {
+    if (localStorage.getItem("token")) {
+      handleJoinSuccess();
+      return;
+    }
+
+    setIsJoinOpen(true);
+  }
+
+  function handleJoinSuccess() {
+    setIsJoinOpen(false);
+    navigate("/game");
+  }
   return (
     <>
       <nav className="sticky top-0 z-40 border-b border-purple-100 bg-white/80 shadow-sm backdrop-blur">
@@ -61,9 +77,13 @@ function Navbar(props) {
               How to play
             </button>
 
-            <Link to="/game" className={primaryButtonClass}>
+            <button
+              type="button"
+              onClick={handlePlayClick}
+              className={primaryButtonClass}
+            >
               Play
-            </Link>
+            </button>
 
             {currentUser && (
               <Link
@@ -104,6 +124,19 @@ function Navbar(props) {
           </div>
         </div>
       </nav>{" "}
+      <JoinModal
+        isOpen={isJoinOpen}
+        onClose={() => setIsJoinOpen(false)}
+        onLoginClick={() => {
+          setIsJoinOpen(false);
+          setIsLoginOpen(true);
+        }}
+        onCreateAccountClick={() => {
+          setIsJoinOpen(false);
+          setIsCreateAccountOpen(true);
+        }}
+        onJoinSuccess={handleJoinSuccess}
+      />
       <CreateAccountModal
         isOpen={isCreateAccountOpen}
         onClose={() => setIsCreateAccountOpen(false)}
