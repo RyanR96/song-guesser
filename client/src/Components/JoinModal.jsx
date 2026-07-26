@@ -26,13 +26,19 @@ function joinModal(props) {
 
     console.log("You are:", trimmedUsername);
     localStorage.setItem("guestUsername", trimmedUsername);
+    resetForm();
     onJoinSuccess();
   }
 
   function handleClose() {
+    resetForm();
+
+    onClose();
+  }
+
+  function resetForm() {
     setUsername("");
     setError("");
-    onClose();
   }
 
   return (

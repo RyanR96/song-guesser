@@ -81,6 +81,7 @@ function Navbar(props) {
               type="button"
               onClick={handlePlayClick}
               className={primaryButtonClass}
+              disabled={isGamePage}
             >
               Play
             </button>
