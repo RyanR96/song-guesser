@@ -117,7 +117,14 @@ function Homepage(props) {
             </div>
           </div>
         </div>
-        {currentUser && (
+        <button
+          className="w-full max-w-md rounded-xl bg-purple-600 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-purple-200 transition hover:bg-purple-500"
+          onClick={handlePlayClick}
+        >
+          ▶️ Play game
+        </button>
+        {/**
+         *         {currentUser && (
           <Link
             to={`profile/${currentUser.username}`}
             className="underline underline-offset-2 font-semibold"
@@ -134,49 +141,52 @@ function Homepage(props) {
             Logout
           </button>
         )}
+         * 
+         * 
+         */}
 
         {!currentUser && (
-          <button
-            onClick={() => setIsLoginOpen(true)}
-            className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
-          >
-            Login
-          </button>
+          <>
+            <p className="mt-5 text-sm font-medium text-slate-500">
+              Play as a guest or login to save your stats
+            </p>
+            <div className="mt-5 w-full max-w-md grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setIsLoginOpen(true)}
+                className="rounded-xl border border-purple-200 px-6 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsCreateAccountOpen(true)}
+                className="rounded-xl border border-purple-200 px-6 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
+              >
+                Create Account
+              </button>
+            </div>
+          </>
         )}
-
-        <p className="text-center">Join the lobby</p>
-        <button
-          className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
-          onClick={handlePlayClick}
-        >
-          Play game
-        </button>
-
-        <JoinModal
-          isOpen={isJoinOpen}
-          onClose={() => {
-            setIsJoinOpen(false);
-            setJoinError("");
-          }}
-          onLoginClick={() => {
-            setIsJoinOpen(false);
-            setIsLoginOpen(true);
-          }}
-          onCreateAccountClick={() => {
-            setIsJoinOpen(false);
-            setIsCreateAccountOpen(true);
-          }}
-          onJoinSuccess={handleJoinSuccess}
-          externalError={joinError}
-        />
-
-        <button
-          onClick={() => setIsCreateAccountOpen(true)}
-          className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
-        >
-          Create Account
-        </button>
       </section>
+      <JoinModal
+        isOpen={isJoinOpen}
+        onClose={() => {
+          setIsJoinOpen(false);
+          setJoinError("");
+        }}
+        onLoginClick={() => {
+          setIsJoinOpen(false);
+          setIsLoginOpen(true);
+        }}
+        onCreateAccountClick={() => {
+          setIsJoinOpen(false);
+          setIsCreateAccountOpen(true);
+        }}
+        onJoinSuccess={handleJoinSuccess}
+        externalError={joinError}
+      />
+
       <CreateAccountModal
         isOpen={isCreateAccountOpen}
         onClose={() => setIsCreateAccountOpen(false)}
