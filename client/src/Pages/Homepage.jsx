@@ -64,7 +64,7 @@ function Homepage(props) {
 
   return (
     <main className="min-h-[calc(100dvh-73px)] bg-gradient-to-b from-purple-50 via-white to-purple-50 px-4 py-14">
-      <section className="mx-auto flex max-w-3xl flex-col items-center rounded-3xl border border-purple-100 bg-white/80 px-6 py-14 text-center shadow-sm backdrop-blur sm:px-10">
+      <section className="mx-auto flex max-w-4xl flex-col items-center rounded-3xl border border-purple-100 bg-white/80 px-6 py-16 text-center shadow-sm backdrop-blur sm:px-10 gap-6">
         <div className="mb-8">
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-950">
             Song Guessing Game
@@ -144,30 +144,54 @@ function Homepage(props) {
          * 
          * 
          */}
-
-        {!currentUser && (
-          <>
-            <p className="mt-5 text-sm font-medium text-slate-500">
-              Play as a guest or login to save your stats
-            </p>
-            <div className="mt-5 w-full max-w-md grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setIsLoginOpen(true)}
-                className="rounded-xl border border-purple-200 px-6 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
-              >
-                Login
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsCreateAccountOpen(true)}
-                className="rounded-xl border border-purple-200 px-6 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
-              >
-                Create Account
-              </button>
-            </div>
-          </>
-        )}
+        <div className="mt-5 flex w-full max-w-md flex-col items-center gap-5">
+          {!currentUser ? (
+            <>
+              <p className="text-sm font-medium text-slate-500">
+                Play as a guest or login to save your stats
+              </p>
+              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsLoginOpen(true)}
+                  className="rounded-xl border border-purple-200 px-6 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCreateAccountOpen(true)}
+                  className="rounded-xl border border-purple-200 px-6 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
+                >
+                  Create Account
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-medium text-slate-500">
+                Logged in as{" "}
+                <span className="font-bold text-purple-700">
+                  {currentUser.username}
+                </span>
+              </p>
+              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Link
+                  to={`profile/${currentUser.username}`}
+                  className="rounded-xl border border-purple-200 px-6 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
+                >
+                  My Profile
+                </Link>
+                <button
+                  onClick={onLogout}
+                  className="rounded-xl border border-purple-200 px-6 py-3 font-semibold text-purple-700 transition hover:bg-purple-50"
+                >
+                  Logout
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </section>
       <JoinModal
         isOpen={isJoinOpen}
