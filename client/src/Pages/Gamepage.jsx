@@ -127,6 +127,7 @@ function Gamepage() {
 
     return () => {
       socket.off("connect", handleConnect);
+      socket.off("connect_error", handleConnectError);
       socket.off("joinResult", handleJoinResult);
       socket.off("state", getState);
       socket.off("guessResult", handleGuessFeedback);
@@ -252,45 +253,92 @@ function Gamepage() {
 
   if (!gameState) return <div>Loading game</div>;
   return (
-    <div className="text-center">
-      <h1 className="text-3xl font-bold underline">Gamepage!</h1>
+    <main className="min-h-[calc(100dvh-73px)] bg-gradient-to-b from-purple-50 via-white to-purple-50 px-4 py-8">
+      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-12">
+        <aside className="lg:col-span-3">
+          <LeaderboardCard leaderboard={gameState.leaderboard} />
+        </aside>
+        <h1 className="text-3xl font-bold underline">Gamepage!</h1>
 
-      {gameState.roundPhase === "playing" && (
-        <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
-      )}
+        {gameState.roundPhase === "playing" && (
+          <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
+        )}
 
-      {gameState.roundPhase === "preparing" && (
-        <p>
-          Get ready! Song will start playing in:{" "}
-          {Math.ceil(nextSongTimer / 1000)}{" "}
-        </p>
-      )}
+        {gameState.roundPhase === "preparing" && (
+          <p>
+            Get ready! Song will start playing in:{" "}
+            {Math.ceil(nextSongTimer / 1000)}{" "}
+          </p>
+        )}
 
-      {nextGameTimer > 0 && (
-        <p>Time until next game start: {Math.ceil(nextGameTimer / 1000)}</p>
-      )}
+        {nextGameTimer > 0 && (
+          <p>Time until next game start: {Math.ceil(nextGameTimer / 1000)}</p>
+        )}
 
-      <p>Round: {gameState.round}</p>
+        <p>Round: {gameState.round}</p>
 
-      <form onSubmit={handleGuessSubmit}>
-        <input
-          placeholder="Enter guess here"
-          className="border-2 border-black"
-          onChange={e => setGuess(e.target.value)}
-          value={guess}
-        ></input>
-        <button
-          type="submit"
-          className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
-        >
-          Guess
-        </button>
-      </form>
+        <form onSubmit={handleGuessSubmit}>
+          <input
+            placeholder="Enter guess here"
+            className="border-2 border-black"
+            onChange={e => setGuess(e.target.value)}
+            value={guess}
+          ></input>
+          <button
+            type="submit"
+            className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
+          >
+            Guess
+          </button>
+        </form>
 
-      {guessFeedback && <p>{guessFeedback.message}</p>}
+        {guessFeedback && <p>{guessFeedback.message}</p>}
 
+        {gameOverData && !gameState.isPlaying && (
+          <ul>
+            <p>Game Over!</p>
+            {gameOverData.leaderboard.map((player, index) => (
+              <li key={player.username}>
+                {index + 1}. {player.username} : {player.score}{" "}
+              </li>
+            ))}
+          </ul>
+        )}
+        <ul>
+          {gameState?.revealedSongs?.map(song => (
+            <li key={song.round}>
+              {song.artworkUrl && <img src={song.artworkUrl} />}
+              {song.trackViewUrl ? (
+                <a
+                  href={song.trackViewUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium underline underline-offset-2 hover:opacity-75"
+                >
+                  {song.title}
+                </a>
+              ) : (
+                <span>{song.title}</span>
+              )}
+              <span> {song.artist.join(", ")} </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </main>
+  );
+}
+
+function LeaderboardCard(props) {
+  const leaderboard = props.leaderboard ?? [];
+
+  return (
+    <div className="rounded-3xl border border-purple-100 bg-white/90 p-5 shadow-sm backdrop-blur">
+      <h2 className="mb-5 text-lg font-extrabold text-purple-700">
+        🏆 Leaderboard
+      </h2>
       <ul className="space-y-2 text-left mx-20">
-        {gameState?.leaderboard?.map((player, index) => (
+        {leaderboard.map((player, index) => (
           <li key={player.username}>
             {index + 1}. {player.username} : {player.score}
             {typeof player.bothCorrectTime === "number" && (
@@ -300,37 +348,6 @@ function Gamepage() {
                 {(player.bothCorrectTime / 1000).toFixed(1)}s
               </span>
             )}
-          </li>
-        ))}
-      </ul>
-
-      {gameOverData && !gameState.isPlaying && (
-        <ul>
-          <p>Game Over!</p>
-          {gameOverData.leaderboard.map((player, index) => (
-            <li key={player.username}>
-              {index + 1}. {player.username} : {player.score}{" "}
-            </li>
-          ))}
-        </ul>
-      )}
-      <ul>
-        {gameState?.revealedSongs?.map(song => (
-          <li key={song.round}>
-            {song.artworkUrl && <img src={song.artworkUrl} />}
-            {song.trackViewUrl ? (
-              <a
-                href={song.trackViewUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium underline underline-offset-2 hover:opacity-75"
-              >
-                {song.title}
-              </a>
-            ) : (
-              <span>{song.title}</span>
-            )}
-            <span> {song.artist.join(", ")} </span>
           </li>
         ))}
       </ul>
