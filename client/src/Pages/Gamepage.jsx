@@ -147,6 +147,7 @@ function Gamepage() {
     }
 
     setNextSongTimer(gameState.prepTime);
+    console.log(gameState.revealedSongs);
 
     const interval = setInterval(() => {
       setNextSongTimer(prev => Math.max(0, prev - 100));
@@ -266,6 +267,9 @@ function Gamepage() {
             <MainGamePanel />
           )}
         </section>
+        <aside className="lg:col-span-3">
+          <RevealedSongCard songs={gameState.revealedSongs} />
+        </aside>
         <h1 className="text-3xl font-bold underline">Gamepage!</h1>
 
         {gameState.roundPhase === "playing" && (
@@ -375,6 +379,68 @@ function GameOverPanel(props) {
   return (
     <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur text-center sm:p-8">
       Game over panel
+    </div>
+  );
+}
+
+function RevealedSongCard(props) {
+  const { songs } = props;
+  return (
+    <div className="rounded-3xl border border-purple-100 bg-white/90 p-5 shadow-sm backdrop-blur">
+      <h2 className="mb-5 text-lg font-extrabold text-purple-700">
+        🎵 Revealed Songs
+      </h2>
+      {songs.length === 0 ? (
+        <p className="text-sm text-slate-500">
+          Songs will appear here after each round
+        </p>
+      ) : (
+        <ul className="space-y-3">
+          {songs.map(song => (
+            <li
+              key={song.round}
+              className="flex gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm"
+            >
+              {song.artworkUrl ? (
+                <img
+                  src={song.artworkUrl}
+                  alt={`${song.title} artwork`}
+                  className="h-16 w-16 shrink-0 rounded-xl object-cover border border-black"
+                />
+              ) : (
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-100">
+                  🎵
+                </div>
+              )}
+
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-purple-600">
+                  Round {song.round}
+                </p>
+
+                {song.trackViewUrl ? (
+                  <a
+                    href={song.trackViewUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block truncate font-bold text-slate-800 underline-offset-2 hover:underline"
+                  >
+                    {song.title}
+                  </a>
+                ) : (
+                  <p className="truncate text-sm text-slate-500">
+                    {song.title}
+                  </p>
+                )}
+
+                <p className="truncate text-sm text-slate-500">
+                  {song.artist.join(", ")}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
