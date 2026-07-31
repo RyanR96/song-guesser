@@ -258,6 +258,14 @@ function Gamepage() {
         <aside className="lg:col-span-3">
           <LeaderboardCard leaderboard={gameState.leaderboard} />
         </aside>
+
+        <section className="lg:col-span-6">
+          {gameOverData && !gameState.isPlaying ? (
+            <GameOverPanel />
+          ) : (
+            <MainGamePanel />
+          )}
+        </section>
         <h1 className="text-3xl font-bold underline">Gamepage!</h1>
 
         {gameState.roundPhase === "playing" && (
@@ -351,6 +359,22 @@ function LeaderboardCard(props) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function MainGamePanel(props) {
+  return (
+    <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8">
+      Main game panel
+    </div>
+  );
+}
+
+function GameOverPanel(props) {
+  return (
+    <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur text-center sm:p-8">
+      Game over panel
     </div>
   );
 }
