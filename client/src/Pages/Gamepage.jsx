@@ -349,17 +349,30 @@ function LeaderboardCard(props) {
       <h2 className="mb-5 text-lg font-extrabold text-purple-700">
         🏆 Leaderboard
       </h2>
-      <ul className="space-y-2 text-left mx-20">
+      <ul className="space-y-3">
         {leaderboard.map((player, index) => (
-          <li key={player.username}>
-            {index + 1}. {player.username} : {player.score}
-            {typeof player.bothCorrectTime === "number" && (
-              <span>
-                {" "}
-                You got the answer correct in :{" "}
-                {(player.bothCorrectTime / 1000).toFixed(1)}s
+          <li
+            key={player.username}
+            className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white px-4 py-3"
+          >
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm font-bold text-purple-700">
+                {index + 1}
               </span>
-            )}
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-slate-800">
+                  {player.username}
+                </p>
+
+                {typeof player.bothCorrectTime === "number" && (
+                  <p className="text-xs text-slate-500">
+                    Guessed correctly in:{" "}
+                    {(player.bothCorrectTime / 1000).toFixed(1)}s
+                  </p>
+                )}
+              </div>
+            </div>
+            <p className="font-extrabold text-purple-700">{player.score}</p>
           </li>
         ))}
       </ul>
