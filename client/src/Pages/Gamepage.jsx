@@ -6,7 +6,7 @@ function Gamepage() {
   const [error, setError] = useState("");
   const [gameState, setGameState] = useState(null);
   const [gameOverData, setGameOverData] = useState(null);
-  const [guessFeedback, setGuessFeedback] = useState("");
+  const [guessFeedback, setGuessFeedback] = useState(null);
   const [displayTimer, setDisplayTimer] = useState(0);
   const [guess, setGuess] = useState("");
   const [lobbyState, setLobbyState] = useState(null);
@@ -264,7 +264,7 @@ function Gamepage() {
           {gameOverData && !gameState.isPlaying ? (
             <GameOverPanel />
           ) : (
-            <MainGamePanel />
+            <MainGamePanel gameState={gameState} />
           )}
         </section>
         <aside className="lg:col-span-3">
@@ -381,9 +381,22 @@ function LeaderboardCard(props) {
 }
 
 function MainGamePanel(props) {
+  const { gameState } = props;
+
+  const roundLabel =
+    gameState.round > 0
+      ? gameState.totalRounds
+        ? `Round ${gameState.round} of ${gameState.totalRounds}`
+        : `Round ${gameState.round}`
+      : "Waiting for game";
   return (
     <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8">
-      Main game panel
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border border-black">
+        <p className="font-bold text-slate-800">{roundLabel}</p>
+        <div className="flex items-center gap-3 border border-red">
+          <span>Volume</span>
+        </div>
+      </div>
     </div>
   );
 }

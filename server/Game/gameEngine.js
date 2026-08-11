@@ -210,7 +210,7 @@ class GameEngine {
     this.currentSong = this.songs[this.currentRound - 1];
     console.log("Current song: ", this.currentSong);
     this.roundPhase = "preparing";
-    this.roundStartTime = Date.now();
+    this.prepStartTime = Date.now();
 
     if (this.timer) clearTimeout(this.timer);
     if (this.prepTimer) clearTimeout(this.prepTimer);
@@ -330,6 +330,7 @@ class GameEngine {
     return {
       isPlaying: true,
       round: this.currentRound,
+      totalRounds: this.totalRounds,
       roundPhase: this.roundPhase,
       timeLeft,
       prepTime,
