@@ -14,6 +14,7 @@ function Gamepage() {
   const [nextSongTimer, setNextSongTimer] = useState(0);
   const audioRef = useRef(null);
   const navigate = useNavigate();
+  const [volume, setVolume] = useState(0.2);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -205,6 +206,7 @@ function Gamepage() {
 
     const audio = new Audio(gameState.previewUrl);
     audio.preload = "auto";
+    audio.volume = volume;
     audio.load();
 
     audioRef.current = audio;
@@ -218,6 +220,13 @@ function Gamepage() {
       }
     };
   }, [gameState?.round, gameState?.previewUrl]);
+
+  //Responsible for changing audio volume, audio would be created if I do this elsewhere
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    audioRef.current.volume = volume;
+  }, [volume]);
 
   // responsible for playing audio
   useEffect(() => {
@@ -264,7 +273,11 @@ function Gamepage() {
           {gameOverData && !gameState.isPlaying ? (
             <GameOverPanel />
           ) : (
-            <MainGamePanel gameState={gameState} />
+            <MainGamePanel
+              gameState={gameState}
+              volume={volume}
+              setVolume={setVolume}
+            />
           )}
         </section>
         <aside className="lg:col-span-3">
@@ -381,7 +394,7 @@ function LeaderboardCard(props) {
 }
 
 function MainGamePanel(props) {
-  const { gameState } = props;
+  const { gameState, volume, setVolume } = props;
 
   const roundLabel =
     gameState.round > 0
@@ -394,7 +407,16 @@ function MainGamePanel(props) {
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border border-black">
         <p className="font-bold text-slate-800">{roundLabel}</p>
         <div className="flex items-center gap-3 border border-red">
-          <span>Volume</span>
+          <span className="text-sm font-semibold text-slate-500">Volume</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={volume}
+            onChange={e => setVolume(Number(e.target.value))}
+            className="w-32 accent-purple-500"
+          />
         </div>
       </div>
     </div>
