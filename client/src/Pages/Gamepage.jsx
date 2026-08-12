@@ -419,29 +419,19 @@ function MainGamePanel(props) {
 
   if (nextGameTimer > 0) {
     timerText = `Game starts in ${Math.ceil(nextGameTimer / 1000)}s`;
-    timerValue = nextGameTimer;
-    timerTotal = 5000;
   }
 
   if (isPreparing) {
     heading = "Get ready!";
     subtitle = "The next song is about to play";
     timerText = `Song will play in ${Math.ceil(nextSongTimer / 1000)}s`;
-    timerValue = nextSongTimer;
-    timerTotal = 3000;
   }
 
   if (isPlaying) {
     heading = "What's this song?";
     subtitle = "The song is now playing";
     timerText = `${Math.ceil(displayTimer / 1000)}s left`;
-    timerValue = displayTimer;
-    timerTotal = 5000;
   }
-  const progress =
-    timerTotal > 0 ? 1 - Math.max(0, timerValue) / timerTotal : 0;
-
-  const degrees = Math.min(360, Math.max(0, progress * 360));
 
   const roundLabel =
     gameState.round > 0
@@ -474,18 +464,11 @@ function MainGamePanel(props) {
 
         <p className="mt-4 text-slate-500">{subtitle}</p>
 
-        <div
-          className="my-8 flex flex-col h-36 w-36 items-center justify-center rounded-full bg-purple-100 shadow-inner"
-          style={{
-            background: `conic-gradient(rgb(124, 58 237) ${degrees}deg, rgb(237 233 254)0 deg)`,
-          }}
-        >
-          <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white">
-            <span className="text-4xl text-purple-600">🎶</span>
-            <span className="mt-2 text-xl font-extrabold text-purple-700">
-              {timerText}
-            </span>
-          </div>
+        <div className="my-8 flex flex-col h-36 w-36 items-center justify-center">
+          <span className="text-4xl text-purple-600">🎶</span>
+          <span className="mt-2 text-3xl font-extrabold text-purple-700">
+            {timerText}
+          </span>
         </div>
       </div>
     </div>
