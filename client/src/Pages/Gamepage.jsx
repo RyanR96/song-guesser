@@ -248,6 +248,11 @@ function Gamepage() {
     };
   }, [gameState?.round, gameState?.roundPhase]);
 
+  //sets GuessFeedback to empty after each round
+  useEffect(() => {
+    setGuessFeedback(null);
+  }, [gameState?.round]);
+
   function handleGuessSubmit(e) {
     e.preventDefault();
 
@@ -283,6 +288,7 @@ function Gamepage() {
               handleGuessSubmit={handleGuessSubmit}
               guess={guess}
               setGuess={setGuess}
+              guessFeedback={guessFeedback}
             />
           )}
         </section>
@@ -413,6 +419,7 @@ function MainGamePanel(props) {
     handleGuessSubmit,
     guess,
     setGuess,
+    guessFeedback,
   } = props;
 
   const isPreparing = gameState.roundPhase === "preparing";
@@ -501,6 +508,20 @@ function MainGamePanel(props) {
         <p className="mt-3 text-sm text-slate-500">
           Type the artist name or song title
         </p>
+
+        {guessFeedback?.message && (
+          <div className="mt-6 w-full max-w-2xl rounded-2xl border border-purple-100 px-5 py-4 text-center">
+            <p className="font-semibold text-purple-700">
+              {guessFeedback.message}
+            </p>
+
+            {guessFeedback.pointsAwarded > 0 && (
+              <p className="mt-1 text-sm font-semibold text-green-600">
+                +{guessFeedback.pointsAwarded} points
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
