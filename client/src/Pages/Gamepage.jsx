@@ -280,12 +280,18 @@ function Gamepage() {
               nextGameTimer={nextGameTimer}
               displayTimer={displayTimer}
               nextSongTimer={nextSongTimer}
+              handleGuessSubmit={handleGuessSubmit}
+              guess={guess}
+              setGuess={setGuess}
             />
           )}
         </section>
         <aside className="lg:col-span-3">
           <RevealedSongCard songs={gameState.revealedSongs} />
         </aside>
+        {/**
+         * 
+         
         <h1 className="text-3xl font-bold underline">Gamepage!</h1>
 
         {gameState.roundPhase === "playing" && (
@@ -351,7 +357,7 @@ function Gamepage() {
               <span> {song.artist.join(", ")} </span>
             </li>
           ))}
-        </ul>
+        </ul>*/}
       </div>
     </main>
   );
@@ -404,6 +410,9 @@ function MainGamePanel(props) {
     nextGameTimer,
     displayTimer,
     nextSongTimer,
+    handleGuessSubmit,
+    guess,
+    setGuess,
   } = props;
 
   const isPreparing = gameState.roundPhase === "preparing";
@@ -441,9 +450,9 @@ function MainGamePanel(props) {
       : "Waiting for game";
   return (
     <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border border-black">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-bold text-slate-800">{roundLabel}</p>
-        <div className="flex items-center gap-3 border border-red">
+        <div className="flex items-center gap-3">
           <span className="text-sm font-semibold text-slate-500">Volume</span>
           <input
             type="range"
@@ -470,6 +479,28 @@ function MainGamePanel(props) {
             {timerText}
           </span>
         </div>
+        <form
+          onSubmit={handleGuessSubmit}
+          className="grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]"
+        >
+          <input
+            placeholder="Enter artist name or song title"
+            onChange={e => setGuess(e.target.value)}
+            value={guess}
+            disabled={isLobby}
+            className="rounded-xl border border-slate-300 px-4 py-4 text-sm outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-200 disabled:cursor-not-allowed disabled:bg-slate-50"
+          />
+
+          <button
+            type="submit"
+            className="rounded-xl bg-purple-600 px-8 py-4 font-bold text-white shadow-lg shadow-purple-200 transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:bg-purple-300"
+          >
+            Guess
+          </button>
+        </form>
+        <p className="mt-3 text-sm text-slate-500">
+          Type the artist name or song title
+        </p>
       </div>
     </div>
   );
