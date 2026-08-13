@@ -276,7 +276,10 @@ function Gamepage() {
 
         <section className="lg:col-span-6">
           {gameOverData && !gameState.isPlaying ? (
-            <GameOverPanel />
+            <GameOverPanel
+              gameOverData={gameOverData}
+              nextGameTimer={nextGameTimer}
+            />
           ) : (
             <MainGamePanel
               gameState={gameState}
@@ -295,75 +298,6 @@ function Gamepage() {
         <aside className="lg:col-span-3">
           <RevealedSongCard songs={gameState.revealedSongs} />
         </aside>
-        {/**
-         * 
-         
-        <h1 className="text-3xl font-bold underline">Gamepage!</h1>
-
-        {gameState.roundPhase === "playing" && (
-          <p>Seconds left: {Math.ceil(displayTimer / 1000)}</p>
-        )}
-
-        {gameState.roundPhase === "preparing" && (
-          <p>
-            Get ready! Song will start playing in:{" "}
-            {Math.ceil(nextSongTimer / 1000)}{" "}
-          </p>
-        )}
-
-        {nextGameTimer > 0 && (
-          <p>Time until next game start: {Math.ceil(nextGameTimer / 1000)}</p>
-        )}
-
-        <p>Round: {gameState.round}</p>
-
-        <form onSubmit={handleGuessSubmit}>
-          <input
-            placeholder="Enter guess here"
-            className="border-2 border-black"
-            onChange={e => setGuess(e.target.value)}
-            value={guess}
-          ></input>
-          <button
-            type="submit"
-            className="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-lg font-semibold text-center"
-          >
-            Guess
-          </button>
-        </form>
-
-        {guessFeedback && <p>{guessFeedback.message}</p>}
-
-        {gameOverData && !gameState.isPlaying && (
-          <ul>
-            <p>Game Over!</p>
-            {gameOverData.leaderboard.map((player, index) => (
-              <li key={player.username}>
-                {index + 1}. {player.username} : {player.score}{" "}
-              </li>
-            ))}
-          </ul>
-        )}
-        <ul>
-          {gameState?.revealedSongs?.map(song => (
-            <li key={song.round}>
-              {song.artworkUrl && <img src={song.artworkUrl} />}
-              {song.trackViewUrl ? (
-                <a
-                  href={song.trackViewUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium underline underline-offset-2 hover:opacity-75"
-                >
-                  {song.title}
-                </a>
-              ) : (
-                <span>{song.title}</span>
-              )}
-              <span> {song.artist.join(", ")} </span>
-            </li>
-          ))}
-        </ul>*/}
       </div>
     </main>
   );
@@ -528,9 +462,39 @@ function MainGamePanel(props) {
 }
 
 function GameOverPanel(props) {
+  const { nextGameTimer, gameOverData } = props;
+  const leaderboard = gameOverData?.leaderboard ?? [];
   return (
     <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur text-center sm:p-8">
-      Game over panel
+      <h1 className="text-3xl font-extrabold text-purple-700 ">Game over!</h1>
+      {nextGameTimer > 0 && (
+        <p className="mt-6 font-semibold text-slate-500">
+          Next game starts in:{" "}
+          <span className="text-purple-700">
+            {Math.ceil(nextGameTimer / 1000)}s
+          </span>
+        </p>
+      )}
+      <p className="mt-2 text-sm text-slate-500">Final leaderboard</p>
+      {leaderboard.length === 0 ? (
+        <p className="mt-6 text-sm text-slate-500">No players found</p>
+      ) : (
+        <ol className="mx-auto mt-6 max-w-md space-y-3 text-left">
+          {leaderboard.map((player, index) => (
+            <li
+              key={player.username}
+              className="flex items-center justify-between rounded-xl border border-slate-100 bg-white px-4 py-3"
+            >
+              <span className="font-semibold text-slate-800">
+                {index + 1}. {player.username}{" "}
+              </span>
+              <span className="font-semibold text-purple-700">
+                {player.score}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   );
 }
