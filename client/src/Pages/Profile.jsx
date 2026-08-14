@@ -60,10 +60,22 @@ function Profile() {
   if (!stats) return <p>No stats found</p>;
 
   return (
-    <div>
-      <h1>Profile</h1>
-      <UserStatsCard stats={stats} />
-    </div>
+    <main className="min-h-[calc(100dvh-73px)] bg-gradient-to-b from-purple-50 via-white to-purple-50 px-4 py-10">
+      <div className="mx-auto max-w-5xl">
+        <section className="rounded-3xl border border-purple-100 bg-white/90 px-6 py-10 text-center shadow-sm backdrop-blur">
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
+            {stats.username ?? username}
+          </h1>
+          <p className="mt-3 text-sm font-semibold text-slate-500">
+            Registered Player
+          </p>
+        </section>
+
+        <section className="mt-12">
+          <UserStatsCard stats={stats} />
+        </section>
+      </div>
+    </main>
   );
 }
 
