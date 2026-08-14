@@ -16,6 +16,12 @@ function Gamepage() {
   const navigate = useNavigate();
   const [volume, setVolume] = useState(0.2);
 
+  const mockLeaderboard = Array.from({ length: 30 }, (_, index) => ({
+    username: `Player${index + 1}`,
+    score: 100 - index,
+    bothCorrectTime: null,
+  }));
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const guestUsername = localStorage.getItem("guestUsername");
@@ -197,7 +203,7 @@ function Gamepage() {
     return () => {
       clearInterval(interval);
     };
-  }, [gameState?.round, gameState?.timeLeft]);
+  }, [gameState?.round, gameState?.timeLeft, gameState?.roundPhase]);
 
   // Preloading audio
 
@@ -269,7 +275,7 @@ function Gamepage() {
   if (!gameState) return <div>Loading game</div>;
   return (
     <main className="min-h-[calc(100dvh-73px)] bg-gradient-to-b from-purple-50 via-white to-purple-50 px-4 py-8">
-      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-12">
+      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-12 items-stretch">
         <aside className="lg:col-span-3">
           <LeaderboardCard leaderboard={gameState.leaderboard} />
         </aside>
@@ -279,6 +285,7 @@ function Gamepage() {
             <GameOverPanel
               gameOverData={gameOverData}
               nextGameTimer={nextGameTimer}
+              mockLeaderboard={mockLeaderboard}
             />
           ) : (
             <MainGamePanel
@@ -307,11 +314,11 @@ function LeaderboardCard(props) {
   const leaderboard = props.leaderboard ?? [];
 
   return (
-    <div className="rounded-3xl border border-purple-100 bg-white/90 p-5 shadow-sm backdrop-blur">
+    <div className="rounded-3xl border border-purple-100 bg-white/90 p-5 shadow-sm backdrop-blur h-full lg:min-h-[540px]">
       <h2 className="mb-5 text-lg font-extrabold text-purple-700">
         🏆 Leaderboard
       </h2>
-      <ul className="space-y-3">
+      <ul className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
         {leaderboard.map((player, index) => (
           <li
             key={player.username}
@@ -390,7 +397,7 @@ function MainGamePanel(props) {
         : `Round ${gameState.round}`
       : "Waiting for game";
   return (
-    <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8">
+    <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8 h-full lg:min-h-[600px]">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-bold text-slate-800">{roundLabel}</p>
         <div className="flex items-center gap-3">
@@ -462,10 +469,10 @@ function MainGamePanel(props) {
 }
 
 function GameOverPanel(props) {
-  const { nextGameTimer, gameOverData } = props;
+  const { nextGameTimer, gameOverData, mockLeaderboard } = props;
   const leaderboard = gameOverData?.leaderboard ?? [];
   return (
-    <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur text-center sm:p-8">
+    <div className="rounded-3xl border border-purple-100 bg-white/90 p-6 shadow-sm backdrop-blur text-center sm:p-8 h-full lg:min-h-[540px]">
       <h1 className="text-3xl font-extrabold text-purple-700 ">Game over!</h1>
       {nextGameTimer > 0 && (
         <p className="mt-6 font-semibold text-slate-500">
@@ -479,7 +486,7 @@ function GameOverPanel(props) {
       {leaderboard.length === 0 ? (
         <p className="mt-6 text-sm text-slate-500">No players found</p>
       ) : (
-        <ol className="mx-auto mt-6 max-w-md space-y-3 text-left">
+        <ol className="mx-auto mt-6 max-w-md space-y-3 text-left max-h-[400px] overflow-y-auto pr-1">
           {leaderboard.map((player, index) => (
             <li
               key={player.username}
@@ -501,8 +508,17 @@ function GameOverPanel(props) {
 
 function RevealedSongCard(props) {
   const { songs } = props;
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    if (!listRef.current) return;
+    listRef.current?.scrollTo({
+      top: listRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [songs.length]);
   return (
-    <div className="rounded-3xl border border-purple-100 bg-white/90 p-5 shadow-sm backdrop-blur">
+    <div className="rounded-3xl border border-purple-100 bg-white/90 p-5 shadow-sm backdrop-blur h-full lg:min-h-[540px]">
       <h2 className="mb-5 text-lg font-extrabold text-purple-700">
         🎵 Revealed Songs
       </h2>
@@ -511,7 +527,10 @@ function RevealedSongCard(props) {
           Songs will appear here after each round
         </p>
       ) : (
-        <ul className="space-y-3">
+        <ul
+          className="space-y-3 max-h-[480px] overflow-y-auto pr-1"
+          ref={listRef}
+        >
           {songs.map(song => (
             <li
               key={song.round}
