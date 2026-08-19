@@ -3,12 +3,14 @@ import { useState } from "react";
 import CreateAccountModal from "./CreateAccountModal";
 import LoginModal from "./LoginModal";
 import JoinModal from "./JoinModal";
+import HowToPlayModal from "./HowToPlayModal";
 
 function Navbar(props) {
   const { currentUser, onAuthSuccess, onLogout } = props;
   const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isJoinOpen, setIsJoinOpen] = useState(false);
+  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -71,7 +73,7 @@ function Navbar(props) {
 
             <button
               type="button"
-              onClick={() => {}}
+              onClick={() => setIsHowToPlayOpen(true)}
               className={subtleButtonClass}
             >
               How to play
@@ -137,6 +139,10 @@ function Navbar(props) {
           setIsCreateAccountOpen(true);
         }}
         onJoinSuccess={handleJoinSuccess}
+      />
+      <HowToPlayModal
+        isOpen={isHowToPlayOpen}
+        onClose={() => setIsHowToPlayOpen(false)}
       />
       <CreateAccountModal
         isOpen={isCreateAccountOpen}
