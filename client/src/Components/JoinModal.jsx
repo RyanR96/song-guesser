@@ -60,7 +60,7 @@ function joinModal(props) {
           >
             <button
               type="button"
-              className="absolute right-5 top-4 text-xl text-slate-400 hover:text-slate-700"
+              className="absolute right-5 top-4 flex h-8 w-8 items-center justify-center rounded-full text-xl font-semibold text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
               onClick={handleClose}
             >
               X
