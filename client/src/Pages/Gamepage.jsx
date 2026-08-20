@@ -27,8 +27,12 @@ function Gamepage() {
     const guestUsername = localStorage.getItem("guestUsername");
 
     if (!token && !guestUsername) {
-      setError("No username/account found. Please login/enter a username");
-      console.log("No user/login");
+      navigate("/", {
+        state: {
+          joinError: "Enter a guest username/login to play",
+          openJoin: true,
+        },
+      });
       return;
     }
 
