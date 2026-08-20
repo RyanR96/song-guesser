@@ -13,6 +13,8 @@ function joinModal(props) {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
 
+  const displayError = error || externalError;
+
   function handleSubmit(e) {
     e.preventDefault();
     console.log("Submitted");
@@ -87,17 +89,16 @@ function joinModal(props) {
               />
               <motion.p
                 className="mt-2 min-h-5 text-sm font-semibold text-red-500"
-                key={externalError}
+                key={displayError}
                 initial={{ opacity: 0 }}
                 animate={
-                  externalError
+                  displayError
                     ? { opacity: 1, x: [0, -6, 6, -4, 4, 0] }
                     : { opacity: 0 }
                 }
                 transition={{ duration: 0.35, ease: easeInOut }}
               >
-                {externalError || ""}{" "}
-                {/** Add regular errors to this later, will probably need combining into a new state */}
+                {displayError || ""}{" "}
               </motion.p>
 
               <button
