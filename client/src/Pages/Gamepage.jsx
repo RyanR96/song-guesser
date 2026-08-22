@@ -54,19 +54,29 @@ function Gamepage() {
     // err for logged users
     function handleConnectError(err) {
       console.log(err.message);
-      const message =
-        err.message === "Invalid token"
-          ? "Your session expired. Please login again"
-          : "Could not connect to game";
 
-      localStorage.removeItem("token");
+      const isInvalidToken = err.message === "Invalid token";
+
+      const message = isInvalidToken
+        ? "Your session expired. Please login again"
+        : "Could not connect to game. Try again later";
+
+      if (isInvalidToken) {
+        localStorage.removeItem("token");
+      }
+
       socket.disconnect();
 
       navigate("/", {
-        state: {
-          loginError: message,
-          openLogin: err.message === "Invalid token",
-        },
+        state: isInvalidToken
+          ? {
+              loginError: message,
+              openLogin: true,
+            }
+          : {
+              joinError: message,
+              openJoin: true,
+            },
       });
     }
 

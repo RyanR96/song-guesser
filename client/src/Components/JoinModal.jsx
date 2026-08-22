@@ -19,6 +19,15 @@ function joinModal(props) {
     e.preventDefault();
     console.log("Submitted");
 
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      localStorage.removeItem("guestUsername");
+      resetForm();
+      onJoinSuccess();
+      return;
+    }
+
     const trimmedUsername = username.trim();
 
     if (!trimmedUsername) {
