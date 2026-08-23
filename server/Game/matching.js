@@ -6,6 +6,7 @@ function normaliseText(text) {
     .replace(/\s+/g, " ");
 }
 
+
 function levenshteinDistance(a, b) {
   const matrix = [];
 

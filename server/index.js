@@ -59,7 +59,7 @@ function startLobbyCountdown() {
       FROM "Song"
       WHERE "previewUrl" IS NOT NULL
       ORDER BY RANDOM()
-      LIMIT 3
+      LIMIT 15
       `;
 
       game.startGame(songs);

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const prisma = require("./prismaClient");
 
 async function importPlaylist() {
