@@ -5,13 +5,13 @@ class GameEngine {
     this.isPlaying = false;
     this.currentSong = null;
     this.currentRound = 0;
-    this.totalRounds = 15; // Need to change index.js DB query to use this to make this accurate, but for testing purposes not doing it yet
+    this.totalRounds = 10; // Need to change index.js DB query to use this to make this accurate, but for testing purposes not doing it yet
     this.players = {};
     //this.correctGuessesThisRound = [];
     this.roundGuessProgress = {};
     this.bothGuessesCorrect = 0;
     this.roundStartTime = null;
-    this.roundDuration = 5000;
+    this.roundDuration = 25000;
     this.timer = null;
     this.songs = [];
     this.revealedSongs = [];

@@ -15,6 +15,12 @@ function artistMatches(storedArtists, itunesArtistName) {
   return storedArtists.some(artist => isCloseMatch(artist, itunesArtistName));
 }
 
+function isAlternateVersion(title) {
+  return /\b(live|acoustic|remix|karaoke|instrumental|demo|cover)\b/i.test(
+    title,
+  );
+}
+
 async function importTrackURL() {
   let count = 0;
   let updated = 0;
@@ -61,7 +67,15 @@ async function importTrackURL() {
 
     let matchedResult = null;
 
+    const originalIsAlternate = isAlternateVersion(song.title);
+
     for (const result of data.results) {
+      const resultIsAlternate = isAlternateVersion(result.trackName || "");
+
+      if (!originalIsAlternate && resultIsAlternate) {
+        console.log("Skipping alternate version:", result.trackName);
+        continue;
+      }
       const itunesTitle = cleanSongTitle(result.trackName || "");
       const itunesArtist = result.artistName || "";
 
