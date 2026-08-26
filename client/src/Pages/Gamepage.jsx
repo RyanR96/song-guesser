@@ -112,25 +112,34 @@ function Gamepage() {
       if (data.isPlaying) {
         setGameOverData(null);
       }
-      console.log("Game state Data:", data);
+      /**
+       *  console.log("Game state Data:", data);
+       */
     }
 
     function handleGameOver(data) {
       setGameOverData(data);
-      console.log("GameOver data:", data);
+      /**
+       *  console.log("GameOver data:", data);
+       */
     }
 
     function handleGuessFeedback(data) {
       setGuessFeedback(data);
-      console.log(data);
+      /**
+       *       console.log(data);
       if (data.progress.bothCorrectTime) {
         console.log("Got it correct in :");
         console.log((data.progress?.bothCorrectTime / 1000).toFixed(1));
       }
+       */
     }
 
     function handleLobbyState(data) {
-      console.log("Lobby state", data);
+      /**
+       * console.log("Lobby state", data);
+       */
+
       setLobbyState(data);
     }
 
@@ -168,11 +177,15 @@ function Gamepage() {
     }
 
     setNextSongTimer(gameState.prepTime);
-    console.log(gameState.revealedSongs);
+    /**
+     * console.log(gameState.revealedSongs);
+     */
 
     const interval = setInterval(() => {
       setNextSongTimer(prev => Math.max(0, prev - 100));
-      console.log(nextSongTimer);
+      /**
+       * console.log(nextSongTimer);
+       */
     }, 100);
 
     return () => {
@@ -192,7 +205,9 @@ function Gamepage() {
 
     const interval = setInterval(() => {
       setNextGameTimer(prev => Math.max(0, prev - 100));
-      console.log(nextGameTimer);
+      /**
+       * console.log(nextGameTimer);
+       */
     }, 100);
 
     return () => {
@@ -260,8 +275,9 @@ function Gamepage() {
     audio.play().catch(error => {
       console.log("Audio failed to play", error);
     });
-
-    console.log(gameState.previewUrl);
+    /**
+     * console.log(gameState.previewUrl);
+     */
 
     return () => {
       audio.pause();
@@ -277,8 +293,6 @@ function Gamepage() {
     e.preventDefault();
 
     if (!guess.trim()) return;
-
-    console.log(e.target.value);
 
     socket.emit("guess", { guess });
     setGuess("");
@@ -348,7 +362,7 @@ function LeaderboardCard(props) {
                 </p>
 
                 {typeof player.bothCorrectTime === "number" && (
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-green-600">
                     Guessed correctly in:{" "}
                     {(player.bothCorrectTime / 1000).toFixed(1)}s
                   </p>
@@ -534,7 +548,7 @@ function RevealedSongCard(props) {
   return (
     <div className="rounded-3xl border border-purple-100 bg-white/90 p-5 shadow-sm backdrop-blur h-full lg:min-h-[540px]">
       <h2 className="mb-5 text-lg font-extrabold text-purple-700">
-        🎵 Revealed Songs
+        Revealed Songs
       </h2>
       {songs.length === 0 ? (
         <p className="text-sm text-slate-500">
@@ -557,7 +571,7 @@ function RevealedSongCard(props) {
                   className="h-16 w-16 shrink-0 rounded-xl object-cover border border-black"
                 />
               ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-100">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-black">
                   🎵
                 </div>
               )}
@@ -577,7 +591,7 @@ function RevealedSongCard(props) {
                     {song.title}
                   </a>
                 ) : (
-                  <p className="truncate text-sm text-slate-500">
+                  <p className="block truncate font-bold text-slate-800">
                     {song.title}
                   </p>
                 )}

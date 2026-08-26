@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence, easeInOut } from "framer-motion";
 
 function CreateAccountModal(props) {
-  const API_URL = "http://localhost:3000";
+  const API_URL = import.meta.env.VITE_API_URL;
   const { isOpen, onClose, onAuthSuccess, onLoginClick } = props;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

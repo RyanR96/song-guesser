@@ -17,7 +17,6 @@ function joinModal(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log("Submitted");
 
     const token = localStorage.getItem("token");
 
@@ -35,7 +34,6 @@ function joinModal(props) {
       return;
     }
 
-    console.log("You are:", trimmedUsername);
     localStorage.setItem("guestUsername", trimmedUsername);
     resetForm();
     onJoinSuccess();

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 function Profile() {
-  const API_URL = "http://localhost:3000";
+  const API_URL = import.meta.env.VITE_API_URL;
   const { username } = useParams();
 
   const [stats, setStats] = useState(null);
@@ -35,8 +35,9 @@ function Profile() {
           setError(data.message || "Failed to fetch user stats");
           return;
         }
-
-        console.log(data);
+        /**
+         *  console.log(data);
+         */
 
         setStats(data);
       } catch (err) {

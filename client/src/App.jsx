@@ -7,7 +7,7 @@ import NotFound from "./Pages/NotFound";
 import Layout from "./Components/Layout";
 
 function App() {
-  const API_URL = "http://localhost:3000";
+  const API_URL = import.meta.env.VITE_API_URL;
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [currentUser, setCurrentUser] = useState(null);
 

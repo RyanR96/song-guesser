@@ -6,7 +6,7 @@ import LoginModal from "../Components/LoginModal";
 
 function Homepage(props) {
   const { currentUser, onAuthSuccess, onLogout } = props;
-  const API_URL = "http://localhost:3000";
+  const API_URL = import.meta.env.VITE_API_URL;
   const [isJoinOpen, setIsJoinOpen] = useState(false);
   const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
