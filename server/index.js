@@ -12,12 +12,20 @@ const jwt = require("jsonwebtoken");
 const http = require("http");
 const { Server } = require("socket.io");
 const game = require("./Game/gameEngine");
+const allowedOrigin = process.env.FRONTEND_URL;
+
+console.log("FRONTEND_URL:", JSON.stringify(allowedOrigin));
 
 app.use(cors());
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: process.env.FRONTEND_URL, credentials: true },
+  cors: {
+    origin: allowedOrigin,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
 app.use(express.json());
