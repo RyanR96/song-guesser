@@ -3,9 +3,20 @@ const prisma = require("../prismaClient");
 const getUserStats = async (req, res) => {
   const { username } = req.params;
 
+  const cleanedUsername = username?.trim();
+
+  if (!cleanedUsername) {
+    return res.status(400).json({ message: "Username required" });
+  }
+
   try {
-    const user = await prisma.user.findUnique({
-      where: { username },
+    const user = await prisma.user.findFirst({
+      where: {
+        username: {
+          equals: cleanedUsername,
+          mode: "insensitive",
+        },
+      },
       select: {
         username: true,
         totalPoints: true,

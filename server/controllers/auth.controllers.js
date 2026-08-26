@@ -6,18 +6,31 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const signUp = async (req, res) => {
   const { username, password } = req.body;
 
+  const cleanedUsername = username?.trim();
+
+  if (!cleanedUsername || !password) {
+    return res.status(400).json({ message: "Username and password required" });
+  }
+
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { username: username },
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        username: {
+          equals: cleanedUsername,
+          mode: "insensitive",
+        },
+      },
     });
 
-    if (existingUser)
+    if (existingUser) {
       return res.status(400).json({ message: "Username already taken" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await prisma.user.create({
       data: {
-        username: username,
+        username: cleanedUsername,
         password: hashedPassword,
       },
     });
@@ -27,6 +40,7 @@ const signUp = async (req, res) => {
       JWT_SECRET,
       { expiresIn: "7d" },
     );
+
     res.json({ token });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -36,20 +50,38 @@ const signUp = async (req, res) => {
 const login = async (req, res) => {
   const { username, password } = req.body;
 
+  const cleanedUsername = username?.trim();
+
+  if (!cleanedUsername || !password) {
+    return res.status(400).json({ message: "Username and password required" });
+  }
+
   try {
-    const user = await prisma.user.findUnique({
-      where: { username: username },
+    const user = await prisma.user.findFirst({
+      where: {
+        username: {
+          equals: cleanedUsername,
+          mode: "insensitive",
+        },
+      },
     });
-    if (!user) return res.status(401).json({ message: "Invalid username" });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid username" });
+    }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ message: "Invalid password" });
+
+    if (!match) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
 
     const token = jwt.sign(
       { id: user.id, username: user.username },
       JWT_SECRET,
       { expiresIn: "7d" },
     );
+
     res.json({ token });
   } catch (err) {
     res.status(500).json({ message: err.message });
