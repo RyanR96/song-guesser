@@ -6,7 +6,6 @@ function normaliseText(text) {
     .replace(/\s+/g, " ");
 }
 
-
 function levenshteinDistance(a, b) {
   const matrix = [];
 
@@ -33,12 +32,13 @@ function levenshteinDistance(a, b) {
   }
   return matrix[b.length][a.length];
 }
-
-console.log(levenshteinDistance("duck", "dark")); // 2
+/**
+ * console.log(levenshteinDistance("duck", "dark")); // 2
 console.log(levenshteinDistance("wots my age agian", "whats my age again"));
 console.log(
   levenshteinDistance("awhats amy aage aagain", "whats my age again"),
 );
+ */
 
 function isCloseMatch(guess, answer) {
   const normalisedAnswer = normaliseText(answer);
@@ -63,8 +63,10 @@ function isCloseMatch(guess, answer) {
   return distance <= allowedDistance;
 }
 
-console.log(isCloseMatch("duck", "dark")); // 2
+/**
+ * console.log(isCloseMatch("duck", "dark")); // 2
 console.log(isCloseMatch("wots my age agian", "whats my age again"));
 console.log(isCloseMatch("awhats amy aage aagain", "whats my age again"));
+ */
 
 module.exports = isCloseMatch;

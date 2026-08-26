@@ -14,16 +14,16 @@ const { Server } = require("socket.io");
 const game = require("./Game/gameEngine");
 
 app.use(cors());
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: { origin: process.env.FRONTEND_URL, credentials: true },
+});
+
 app.use(express.json());
 app.use("/game", gameRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
-
-const server = http.createServer(app);
-
-const io = new Server(server, {
-  cors: { origin: "*" },
-});
 
 let lobbyTimer = null;
 let lobbyDuration = 5000;
@@ -32,7 +32,9 @@ function startLobbyCountdown() {
   if (game.isPlaying) return;
   if (Object.keys(game.players).length === 0) return;
   if (lobbyTimer) return;
-  console.log(Object.keys(game.players).length);
+  /**
+   *   console.log(Object.keys(game.players).length);
+   */
 
   io.emit("lobbyState", {
     isCountingDown: true,
@@ -63,7 +65,9 @@ function startLobbyCountdown() {
       `;
 
       game.startGame(songs);
-      console.log("The songs that are passed into game", songs);
+      /**
+       * console.log("The songs that are passed into game", songs);
+       */
     }
   }, lobbyDuration);
 }
@@ -76,10 +80,16 @@ io.use((socket, next) => {
   }
 
   try {
-    console.log("handshake token", token);
+    /**
+     *   console.log("handshake token", token);
+     */
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     socket.data.user = decoded;
-    console.log("decoded user", socket.data.user);
+    /**
+     *  console.log("decoded user", socket.data.user);
+     */
+
     next();
   } catch (err) {
     console.log("Invalid token");
@@ -198,10 +208,13 @@ game.onGameOver = async ({ leaderboard, players }) => {
       const winningPlayer = players[winner.username];
 
       if (winningPlayer?.isRegistered && winningPlayer?.score > 0) {
-        console.log(
+        /**
+         *         console.log(
           "IS registered, so increment this users wins:",
           winner.username,
         );
+         */
+
         await prisma.user.update({
           where: { id: winningPlayer.userId },
           data: {
@@ -237,7 +250,10 @@ game.onPlayerScored = async ({ player, points }) => {
 };
 
 game.onPlayerCompletedRound = async ({ player, bothCorrectTime }) => {
-  console.log("Attempting to update playercompletedround stats");
+  /**
+   *   console.log("Attempting to update playercompletedround stats");
+   */
+
   try {
     if (!player.isRegistered) return;
 
@@ -264,10 +280,9 @@ game.onPlayerCompletedRound = async ({ player, bothCorrectTime }) => {
   }
 };
 
-const PORT = 3000;
 //server.listen or app.listen?
-server.listen(PORT, () => {
-  console.log(`listening on port: ${PORT}`);
+server.listen(process.env.PORT, () => {
+  console.log(`listening on port: ${process.env.PORT}`);
 });
 
 app.get("/test", (req, res) => {
